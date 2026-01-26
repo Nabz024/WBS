@@ -1,9 +1,21 @@
 Hi Team,
-I’ve been reviewing where we are and noticed we’ve moved into build without a clear sign-off on the discovery phase. Before we go any further, I’d like us to pause briefly and realign so we can plan and deliver with confidence.
-I’ll publish a Confluence page that explains the approach we’ll be using. In short: we aim to deliver a minimal end-to-end (E2E) baseline first (so behaviour is observable in pre-prod), then iterate and strengthen the solution based on what we learn from testing.
-What I need from the team:
-Revisit Discovery using the checklist on the Confluence page
-Define a small set of high-level work items (with clear objectives and deliverables)
-Provide rough, order-of-magnitude estimates for each to support planning and sequencing
+
+Over the past few weeks, I’ve been spending time observing how we’re working and how we’re progressing across the agentic/LLM work. Overall there’s a lot of good momentum, but I’ve also noticed a few areas where tightening up our early planning would help us respond better to wider business demands around clarity, sequencing, and confidence in delivery.
+
+In particular, we’ve moved into build fairly quickly in a few places, before fully closing out discovery and aligning on the shape and scale of the work ahead. That’s understandable given the pace we’re operating at, but as demand increases it’s important we create a bit more shared structure up front.
+
+Here’s the Confluence page with the approach and a worked example for you to review: [INSERT LINK HERE]
+Please have a look at the worked example section in particular, as it shows what “minimal end-to-end first, then iterate” looks like in practice.
+
+As a starting point, I’d like the team to:
+
+- Revisit Discovery using the checklist on the Confluence page
+- Define a small set of high-level work items that reflect the current understanding
+- Provide rough, order-of-magnitude estimates for each to support planning and sequencing
+
+The initial focus will be on agreeing the first end-to-end milestone in pre-prod, with subsequent work iterating and strengthening the solution based on what we learn.
+
+Thanks for engaging with this — the intent is to support the team and make delivery smoother as we scale. Happy to walk through this together if useful.
+
 Thanks,
 [Your Name]

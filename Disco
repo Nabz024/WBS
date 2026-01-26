@@ -1,0 +1,333 @@
+Agentic Delivery – How We Plan & Deliver Work
+
+Purpose of This Page
+
+This page explains the concepts and rationale behind how we plan and deliver agentic / LLM-based solutions. It is intentionally framework-agnostic and focuses on why we work this way, not on specific methodologies or tooling.
+
+The aim of this phase is to strengthen discovery and planning, enable meaningful estimation, and reduce end-to-end delivery risk. This approach is iterative by design and will evolve as we learn from delivery.
+
+
+---
+
+Core Idea
+
+> End-to-end does not mean fully featured.
+End-to-end means minimally viable, observable behaviour across the whole flow.
+
+
+
+We prioritise seeing how the system behaves when everything is connected, then iteratively strengthen parts of the system based on evidence.
+
+
+---
+
+Why This Approach
+
+Agentic and LLM-based systems behave differently from traditional software:
+
+behaviour is probabilistic
+
+failure modes are often silent
+
+issues only surface when components interact
+
+
+Optimising individual parts in isolation can create false confidence. A thin end-to-end baseline exposes the right risks early and provides a stable reference point for iteration.
+
+
+---
+
+High-Level Delivery Lifecycle
+
+We follow a familiar delivery lifecycle, adapted for learning-heavy systems:
+
+1. Discovery
+
+Purpose: Establish shared understanding before committing to build.
+
+Discovery focuses on:
+
+clarifying the problem and desired outcomes
+
+describing the full end-to-end flow (input → processing → data → output → decision)
+
+identifying assumptions, risks, and dependencies
+
+agreeing what success looks like at an end-to-end level
+
+
+Discovery ends with a clear decision that the work is ready to plan.
+
+
+---
+
+2. Build
+
+Purpose: Create working behaviour and learn how the system actually performs.
+
+Build is intentionally iterative. Input handling, reasoning, validation, and controls evolve together rather than in a linear sequence. Work is always anchored to a running end-to-end flow.
+
+
+---
+
+3. UAT / Pre-Production
+
+Purpose: Validate behaviour with realistic data and usage patterns.
+
+This phase focuses on:
+
+observing end-to-end behaviour
+
+identifying edge cases and silent failure modes
+
+validating confidence thresholds and human intervention points
+
+deciding what to harden, iterate, or constrain next
+
+
+
+---
+
+4. Production
+
+Purpose: Operate safely and improve over time.
+
+Production is not an endpoint. Ongoing monitoring, feedback, and iteration are expected as inputs, usage, and behaviour change.
+
+
+---
+
+Planning at the Right Level
+
+To plan effectively under uncertainty, we organise work around clear objectives and decisions, not internal mechanics.
+
+Work should be defined and estimated in chunks that:
+
+improve behaviour end-to-end
+
+produce tangible outputs
+
+surface risk and learning
+
+end with a decision about what to do next
+
+
+Estimates are intentionally high-level and support planning and sequencing, not scope lock-in.
+
+
+---
+
+Discovery Sign-off Checklist
+
+Discovery is considered ready for sign-off only when the items below are explicitly addressed and agreed.
+
+Problem & Outcomes
+
+[ ] Problem statement is clear (what pain, for whom, why now)
+
+[ ] Desired outcomes are defined (how success will be measured)
+
+
+End-to-End Understanding
+
+[ ] End-to-end flow described (input → processing → data → output → decision)
+
+[ ] In-scope vs out-of-scope clearly stated
+
+
+Assumptions, Risks & Dependencies
+
+[ ] Key assumptions documented
+
+[ ] Known risks and unknowns captured (including silent failure risks)
+
+[ ] Dependencies identified (systems, data access, SMEs, environments)
+
+
+Behaviour & Control
+
+[ ] Human-in-the-loop expectations defined (when to stop or escalate)
+
+[ ] Decision points identified (what learning triggers a change in approach)
+
+
+Validation & Readiness
+
+[ ] Data and testing approach agreed (examples, volumes, evaluation method)
+
+[ ] Operational constraints known (security, audit, latency, cost)
+
+
+Discovery Decision
+
+[ ] Discovery reviewed and agreed as ready to plan
+
+[ ] Open questions explicitly carried forward
+
+
+
+---
+
+High-Level Work Definition & Estimation Checklist
+
+Use this section when proposing work items for planning and estimation.
+
+For each high-level work item, confirm:
+
+[ ] Objective – what this work is intended to achieve
+
+[ ] Scope & assumptions – what is included and excluded
+
+[ ] Deliverables – tangible outputs expected
+
+[ ] Success criteria – how outcome will be judged
+
+[ ] Risks or dependencies addressed
+
+[ ] Rough order-of-magnitude estimate
+
+[ ] Confidence level in the estimate (Low / Medium / High)
+
+[ ] Exit decision – what will be decided when this work completes
+
+
+
+---
+
+Minimal End-to-End Baseline (First Milestone)
+
+The first milestone for agentic delivery is a minimal end-to-end baseline running in a pre-production environment.
+
+Characteristics
+
+Narrow use case or request type
+
+Minimal but complete processing path
+
+Realistic failure paths exercised
+
+Full observability in place
+
+Human review enabled by default
+
+
+Expected Outcomes
+
+End-to-end behaviour is observable
+
+Baseline metrics captured
+
+Known failure modes documented
+
+Clear priorities identified for the next iteration
+
+
+This milestone exists to learn, not to finalise the solution.
+
+
+---
+
+Iterative Improvement
+
+Once an end-to-end baseline exists, subsequent work focuses on strengthening specific aspects of behaviour based on what has been observed.
+
+Each iteration:
+
+builds on the same end-to-end flow
+
+improves one area at a time
+
+is validated again end-to-end
+
+
+Over time, this approach produces systems that are both more capable and more reliable.
+
+
+---
+
+How to Use This Page
+
+Use this guidance to:
+
+revisit and align on discovery
+
+define and estimate work at a sensible level
+
+agree the first end-to-end milestone
+
+provide a shared rationale for how we deliver agentic systems
+
+
+This approach is iterative by design. The current focus is on discovery and planning; the way we work will continue to evolve as we learn from delivery.
+
+All set 👍 — you now have a single, complete Confluence-ready page that you can paste or publish as-is.
+
+What this version gives you
+
+✅ No framework names (no CRISP-DM, SAFe, Scrum, etc.)
+
+✅ Clear conceptual rationale for your approach
+
+✅ A simple, familiar Discovery → Build → UAT → Prod lifecycle
+
+✅ Explicit acknowledgement that this rollout is iterative
+
+✅ Concrete checklists that make the expectations actionable
+
+✅ A strong justification for:
+
+revisiting discovery
+
+planning at a higher level
+
+epic-level (order-of-magnitude) estimates
+
+E2E first as the initial milestone
+
+
+
+Why this will land well
+
+Engineers won’t feel “process-ed”
+
+Delivery/governance get clarity and planning signals
+
+Stakeholders can see why you’re pausing without feeling momentum is lost
+
+The checklists turn intent into something teams can actually do
+
+
+How I’d use it in practice
+
+1. Link to this page from the email you already drafted
+
+
+2. Ask the team to:
+
+work through the Discovery Sign-off Checklist
+
+propose high-level work items + estimates using the second checklist
+
+
+
+3. Review responses in a short session and agree:
+
+discovery sign-off
+
+first E2E milestone
+
+next iteration focus
+
+
+
+
+If you want next, I can:
+
+Tailor this for a non-technical leadership version
+
+Help you add page properties + reporting views in Confluence
+
+Or write a short FAQ section to pre-empt common pushback
+
+
+This is a very solid piece of delivery groundwork — you’ve struck the right balance between agility and control.

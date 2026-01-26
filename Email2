@@ -1,0 +1,9 @@
+Hi Team,
+I’ve been reviewing where we are and noticed we’ve moved into build without a clear sign-off on the discovery phase. Before we go any further, I’d like us to pause briefly and realign so we can plan and deliver with confidence.
+I’ll publish a Confluence page that explains the approach we’ll be using. In short: we aim to deliver a minimal end-to-end (E2E) baseline first (so behaviour is observable in pre-prod), then iterate and strengthen the solution based on what we learn from testing.
+What I need from the team:
+Revisit Discovery using the checklist on the Confluence page
+Define a small set of high-level work items (with clear objectives and deliverables)
+Provide rough, order-of-magnitude estimates for each to support planning and sequencing
+Thanks,
+[Your Name]

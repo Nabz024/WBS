@@ -1,0 +1,135 @@
+Here is a structured, professional Markdown template ready to be pasted directly into a **GitHub Wiki page**, **Repo `README.md**`, or a **GitHub Issue** for your Technical Discovery session.
+
+I have formatted it with code blocks, tables, and task lists to render perfectly in GitHub.
+
+---
+
+# Technical Discovery: AOP System Definition
+
+**Status:** `Draft` / `Approved`
+**Date:** YYYY-MM-DD
+**Participants:** [List Attendees]
+
+## 1. Executive Summary
+
+This document defines the technical boundaries, contracts, and safety protocols for the Agentic Operating Procedure (AOP) system. It serves as the engineering contract between Data Science, Engineering, and DevOps.
+
+---
+
+## 2. Data Contracts & Interfaces
+
+*Focus: Defining the JSON schemas and state objects that pass between components.*
+
+### A. Router Output Contract
+
+The interface between the Router (Classifier) and the AOP Execution Engine.
+
+```json
+{
+  "aop_id": "AOP-EMAIL-VERIFY-001",
+  "confidence_score": 0.98,
+  "detected_intent": "account_verification",
+  "routing_decision": "EXECUTE", // or "FALLBACK_HUMAN"
+  "metadata": {
+    "sender_domain": "client-domain.com",
+    "priority_level": "high"
+  },
+  "reasoning_trace": "Subject contains 'balance' and sender matches CRM."
+}
+
+```
+
+### B. The State Object (The "Context")
+
+The persistent memory object that travels through the AOP steps.
+
+```json
+{
+  "session_id": "uuid-1234",
+  "original_input": {
+    "raw_text": "...",
+    "sanitized_text": "..."
+  },
+  "extracted_entities": {
+    "account_id": "12345",
+    "date_range": null
+  },
+  "step_history": [
+    { "step": "db_lookup", "status": "success", "latency_ms": 120 }
+  ],
+  "accumulated_errors": [],
+  "tool_outputs": {}
+}
+
+```
+
+### C. Tool Integration Constraints
+
+* **Database/CRM:**
+* [ ] **Read Protocol:** JSON response required.
+* [ ] **Pagination:** Limit results to `n=5` rows to prevent context window overflow.
+* [ ] **Timeout:** Hard timeout set to `5000ms`.
+
+
+
+---
+
+## 3. Guardrail Matrix
+
+*Focus: Explicit prohibitions and safety checks.*
+
+| Layer | Guardrail | Implementation Method | Owner |
+| --- | --- | --- | --- |
+| **Input (Security)** | **PII Redaction** | Regex/NLP pre-processor scrubs SSN/CC before LLM context. | SecOps |
+| **Input (Security)** | **Prompt Injection** | Classifier checks for "Ignore instructions" patterns. | DS |
+| **Logic (Business)** | **Financial Limits** | AOP cannot draft refunds > $X without HITL flag. | Product |
+| **Logic (Business)** | **Scope containment** | DB lookups restricted to sender's domain (Cross-tenant check). | Eng |
+| **Output (Brand)** | **Hallucination Check** | Fact-checker logic verifies draft numbers exist in `tool_outputs`. | DS |
+| **Output (Brand)** | **Negative Sentiment** | Sentiment analysis on draft; if toxic, route to human. | DS |
+
+---
+
+## 4. Non-Functional Requirements (NFRs)
+
+*Focus: Performance limits and system health.*
+
+### Latency Budget
+
+* [ ] **Total E2E Request:** < 15 seconds (p95)
+* [ ] **Router Overhead:** < 2 seconds
+* [ ] **LLM Generation:** < 8 seconds
+
+### Throughput & Limits
+
+* [ ] **Concurrency:** Support `X` concurrent emails.
+* [ ] **Rate Limits:** Respect OpenAI/Azure TPM (Tokens Per Minute) limit of `[Insert Limit]`.
+* [ ] **Context Window:** Max input token limit set to `[e.g., 128k]`. Truncation strategy: `[Head/Tail/Summary]`.
+
+### Reliability & Fallback
+
+* **Retry Policy:** Linear backoff (1s, 2s). Max 2 retries.
+* **Fail-Safe:** If *any* step fails or times out → Route to `HUMAN_QUEUE` with tag `System_Error`.
+
+---
+
+## 5. Technical RAID Log
+
+*Focus: Risks, Assumptions, Issues, and Dependencies specifically for the build.*
+
+| Type | Severity | Description | Owner | Status |
+| --- | --- | --- | --- | --- |
+| **Risk** | High | LLM Context window may truncate long email threads, losing critical info. | DS Lead | Open |
+| **Assumption** | Med | We assume the legacy CRM API responds in <200ms (Need to verify). | Eng Lead | Open |
+| **Issue** | High | No "Sandbox" environment for the Ticketing System (Write ops are dangerous). | DevOps | Blocked |
+| **Dependency** | High | Approval for "Application Identity" service account to access SQL DB. | InfoSec | Pending |
+
+---
+
+## 6. Definition of Done (DoD) for Discovery
+
+*Ensure these are checked off before ending the session.*
+
+* [ ] **Schema Locked:** JSON structure between Router and AOP is agreed.
+* [ ] **Secrets Managed:** KeyVault/Env Var strategy defined for API keys.
+* [ ] **Logging Strategy:** We know where prompts/completions are logged (e.g., LangSmith/Datadog) and retention policy is set.
+* [ ] **Test Data Access:** DS team has access to historical read-only data for the "Golden Dataset."

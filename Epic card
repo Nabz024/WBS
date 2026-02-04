@@ -1,0 +1,142 @@
+You’re right — what I gave you is **agent-workflow centric**. If your epics are framed as **capabilities** (which is usually cleaner), the card should describe the capability as a **contract**: inputs, outputs, constraints, and how it’s verified — *without* embedding “agent steps” as the unit of work.
+
+Here’s a **Capability Definition Card** version (still works for agentic systems, but doesn’t force you into “agent = epic”).
+
+---
+
+## Capability Definition Card (Agentic or Traditional)
+
+### 1) Capability summary
+
+* **Capability name:**
+* **What this enables (plain English):**
+* **Who uses it / who benefits:**
+* **Business outcome:**
+* **In scope (v1):**
+* **Out of scope (v1):**
+
+---
+
+### 2) Capability contract (this is the core)
+
+**Inputs (what it needs)**
+
+* Sources: (email system / DB / internal store)
+* Required fields:
+* Optional fields:
+* Preconditions / assumptions:
+
+**Outputs (what it produces)**
+
+* Output artifact(s): (e.g., `VerifiedCustomerRecord`, `ExtractedEmailText`, `ClassificationLabel`, `DraftResponse`)
+* Output schema / format:
+* Where it writes to / publishes to:
+
+**Quality of service**
+
+* Latency target:
+* Throughput target:
+* Availability expectations:
+* Idempotency / dedupe expectations:
+
+---
+
+### 3) Rules, policies, and constraints
+
+* **Guardrails / boundaries:** (what it must never do)
+* **Abstain / fallback policy:** (when it returns “unknown” or routes to human)
+* **Privacy & security constraints:** (PII, retention, audit)
+* **Compliance constraints:** (if any)
+
+---
+
+### 4) Interfaces & dependencies
+
+* **Upstream dependencies:** (who provides inputs)
+* **Downstream consumers:** (who uses outputs)
+* **External systems:** (email platform, 3rd-party DB)
+* **Owners / contacts:**
+
+  * Email platform host:
+  * DB owner:
+  * Security/IAM:
+  * MLOps/Platform:
+
+---
+
+### 5) Acceptance criteria (observable)
+
+To say this capability is delivered:
+
+* [ ] Output artifacts match the agreed schema
+* [ ] Meets QoS targets (latency/throughput)
+* [ ] Handles defined failure modes correctly
+* [ ] Logging/audit present
+* [ ] Security controls in place
+* [ ] Works on agreed scenario set
+
+---
+
+### 6) Evaluation & regression (agentic-friendly but capability-framed)
+
+**Scenario set**
+
+* Happy path scenarios:
+* Non-happy path scenarios:
+* Out-of-distribution examples:
+
+**Metrics**
+
+* Correctness metric(s): (e.g., match accuracy, extraction F1, label accuracy)
+* Abstain rate + false-confidence rate
+* Human override rate (pilot)
+* Safety / privacy violations: target = 0
+
+**Regression trigger**
+
+* On prompt/model changes, DB schema changes, new email formats
+
+---
+
+### 7) Operational requirements
+
+* **Monitoring:** what dashboards/alerts exist for this capability?
+* **Runbook:** what to do when it fails?
+* **Change control:** who can change prompts/models/rules and how is it approved?
+* **Versioning:** schemas + prompts/models versioned and traceable
+
+---
+
+### 8) RAID (capability-level)
+
+* **Risks:**
+* **Assumptions:**
+* **Issues:**
+* **Dependencies:**
+
+---
+
+### 9) Open questions
+
+| Question | Owner | Needed by | Impact |
+| -------- | ----- | --------- | ------ |
+|          |       |           |        |
+
+---
+
+## How to use this with capability-based epics (practically)
+
+Instead of epics like “Agent ingests, extracts, verifies…”, you’d have epics/capabilities like:
+
+* **Email Ingestion Capability** (get messages reliably, dedupe, thread context)
+* **Attachment Text Conversion Capability** (PDF/DOCX/image → text with provenance)
+* **Entity/ID Resolution Capability** (extract candidate IDs + confidence)
+* **3rd-Party Verification Capability** (query + match rules + ambiguity handling)
+* **Draft Generation Capability** (draft only, evidence-backed)
+* **Audit & Observability Capability** (traceability, replay, compliance)
+
+Each gets one card. The “agent” is then a **composition** of capabilities under an operating procedure — but you aren’t forced to build your backlog around “agent steps”.
+
+---
+
+If you paste one of your existing epics (title + 2–3 lines of description), I’ll rewrite it into a **capability epic** and fill the card end-to-end so your team sees the difference immediately.

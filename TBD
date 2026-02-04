@@ -1,0 +1,180 @@
+The repositioned session: “E2E Alignment + Integration Readiness”
+
+Purpose: align on the actual workflow, reduce ambiguity inside epics, and leave with a concrete question-pack + decisions for the email platform hosts + DB owners.
+
+Tone / framing (use this verbatim if you want):
+
+“We did strong early discovery and mapped epics. Now that build has started, we’ve learned where the unknowns really are. This session is to realign on the end-to-end flow, turn epic labels into implementable work, and prepare for crisp conversations with the email platform hosts and the database team.”
+
+What “sign-off” means now: not “everything is known”, but:
+
+the flow is agreed,
+
+the open questions are explicit + owned,
+
+the integration contract questions are ready,
+
+the guardrails + evaluation approach are agreed.
+
+Updated workshop (2h 15m) — timeboxed
+1) Context reset + what changed since epic mapping (10 min)
+
+Inputs: original epic map + what you’ve learned from build.
+Exercise: “What we thought / what we now know” (3 bullets each).
+Output: shared acknowledgement + the right “why now”.
+
+2) E2E walkthrough with a concrete example email (25 min)
+
+This is the missing piece for teams who “don’t see the whole”.
+
+Exercise: run one realistic email through the entire journey:
+
+email arrives → ingestion trigger
+
+classification
+
+extraction (ID + key fields + attachment handling)
+
+verification via DB
+
+reconciliation (what if mismatch?)
+
+draft response / routing decision
+
+HITL
+
+audit trail
+
+Facilitation trick: keep asking “what happens next, exactly?” and “what artifact is produced here?”
+
+Output: one agreed “happy path” and a list of failure paths.
+
+3) Epic de-ambiguation clinic (35 min)
+
+You keep the epic structure, but convert it into implementable definitions.
+
+Method: pick the top 3–5 epics causing confusion (e.g., attachment extraction). For each, fill a one-page “Epic Definition Card” live.
+
+Epic Definition Card (fill in the room)
+
+Epic intent: what outcome exists when done?
+
+Inputs/outputs: what comes in, what leaves (data objects)
+
+Definition of done: observable + testable
+
+Key decisions: thresholds, rules, policies
+
+Dependencies: platform hosts / DB / security / MLOps
+
+Open questions: phrased as questions for external teams
+
+Risks: what breaks, what’s costly
+
+Evaluation: how we know it works (metrics + sample set)
+
+Output: 3–5 Epic Definition Cards + an “unknowns backlog”.
+
+5) Integration readiness: prep the question-pack for platform hosts (25 min)
+
+This is where you “help us with discussions with email platform hosts”.
+
+Split into two mini-breakouts (or do as a single group):
+
+A) Email platform host questions
+
+auth model, service accounts, permissions, shared mailboxes
+
+push vs poll, rate limits, throttling
+
+threading semantics, dedupe strategy
+
+attachment retrieval limits
+
+retention + audit constraints
+
+test mailbox / sandbox availability
+
+B) DB verification questions
+
+lookup keys, match logic, ambiguity rules
+
+rate limits, latency, caching rules
+
+fields allowed + PII constraints
+
+error codes / downtime behaviour
+
+test environment + mock data
+
+Output: a single “Integration Questions Pack” you can paste into Confluence and send.
+
+6) Guardrails + evaluation gate (15 min)
+
+Now that you’ve seen the real flow and the epic definitions, you can lock guardrails realistically.
+
+Minimum to agree today:
+
+action boundaries (draft only, no auto-send; HITL required)
+
+abstain rules (when to say “I don’t know”)
+
+privacy (redaction + retention)
+
+evaluation plan (golden set, baseline metrics, regression cadence)
+
+Output: guardrails v1 + evaluation gate for moving from build → pilot.
+
+7) RAID refresh + owners (10 min)
+
+Short, sharp, owner-driven.
+
+Top 5 risks + mitigations
+
+Top 5 dependencies + dates
+
+Blockers/issues already known
+
+Output: RAID updated with owners + next check-in date.
+
+8) DS feasibility sign-off for the re-aligned plan (5 min)
+
+Not “the whole system”, but:
+
+the defined epics are implementable,
+
+the evaluation is credible,
+
+the integration question-pack is correct,
+
+and the unknowns are surfaced and owned.
+
+Output: sign-off statement + list of blocking open questions.
+
+What to change operationally (so this doesn’t happen again)
+Add a “Definition Clinic” gate before build continues on any epic
+
+For agent work especially, “epic mapped” ≠ “epic buildable”.
+
+New rule: an epic cannot enter build unless it has:
+
+clear input/output artifacts,
+
+DoD,
+
+failure modes,
+
+evaluation approach,
+
+external dependencies identified.
+
+Add “E2E demo of thought” every week (15 min)
+
+Not a UI demo — a narrated walkthrough:
+
+“Here’s an example email → here’s what the system did → here’s where confidence was low → here’s the evidence we stored.”
+
+This is how you build shared understanding fast.
+A short opener you can use (non-blamey)
+
+“Since we started build, we’ve uncovered where our assumptions were a bit optimistic — especially around attachments, extraction, and what ‘verification’ really means in practice. Today is about turning our epic map into an executable plan, aligning the team on the end-to-end flow, and leaving with a crisp set of questions and decisions ready for the email platform hosts and database owners.”

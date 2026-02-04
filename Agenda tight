@@ -1,0 +1,144 @@
+Got it — here’s the rewritten version that explicitly anchors on **“we already have epics, we’re tightening them”** and keeps the session lean with **v1 = one AOP**.
+
+---
+
+## Recommended: 90-minute “Epic Tightening + AOP v1 Readiness” session
+
+### Purpose
+
+We already have an initial epic list from early discovery, and build has started. As we’ve worked through the details, it’s clear some epics contain open questions and ambiguous assumptions. This session is to **revisit and tighten the epics** using the **AOP v1** approach, so we leave with:
+
+* a shared end-to-end understanding of the AOP flow,
+* epics refined into implementable slices (clear inputs/outputs/DoD),
+* and a crisp pack of integration requirements for the email platform hosts + DB owners.
+
+### What “sign-off” means today
+
+Not “everything is finished,” but:
+
+* the **AOP v1 flow** is agreed,
+* the **epics are tight enough to build** (clear DoD + dependencies),
+* guardrails/NFRs/contracts are captured at v1 level,
+* and the remaining unknowns are explicit + owned.
+
+---
+
+## Agenda + timeboxes (90 minutes)
+
+### 1) Set context + what we’re fixing (5 min)
+
+* “We have epics. Now we’re tightening them based on what we’ve learned in build and aligning to the AOP v1 design.”
+
+**Output:** agreed session outcomes + decision owners.
+
+---
+
+### 2) Walkthrough: AOP v1 end-to-end on a real example email (15 min)
+
+Quickly run through:
+
+* trigger → steps → DB verify → draft → HITL → log/route
+  Focus on “what happens next, exactly?”
+
+**Output:** agreed step list + key failure points.
+
+---
+
+### 3) Epic tightening clinic (30 min)
+
+**This is the core.** Take the current epic list and refine the top epics that are active or ambiguous.
+
+For each epic, answer (live, quickly):
+
+* **Epic intent:** what outcome exists when done?
+* **AOP step mapping:** which step(s) does this epic enable?
+* **Inputs/outputs:** what comes in, what artifact comes out?
+* **Definition of Done:** testable outcomes (not just “built”)
+* **Dependencies:** email platform / DB / security / MLOps / SME
+* **Open questions:** phrased as questions for external teams
+* **Risks:** what breaks if wrong?
+
+**Output:** updated epic list where each epic has DoD + dependencies + open questions (and anything not tight gets flagged).
+
+---
+
+### 4) Integration readiness: tighten the epic assumptions into data contracts (20 min)
+
+Use the epic tightening output to agree the v1 contracts:
+
+**Email contract (v1)**
+
+* mailbox scope + access method
+* what we ingest (subject/body/thread depth)
+* dedupe/idempotency approach
+* attachments explicitly out of scope
+* retention/audit constraints
+
+**DB contract (v1)**
+
+* lookup keys and match rules
+* verified / not found / ambiguous definitions
+* rate limits + timeout + retry policy
+* permitted fields + audit rules
+
+**Output:** 1-page “Integration Contract v1” that matches the epic plan.
+
+---
+
+### 5) Guardrails + NFRs (15 min)
+
+Keep this light, but explicit, because it constrains the epics.
+
+**Guardrails (AOP v1)**
+
+* action boundaries (draft only, HITL)
+* abstain conditions (low confidence, DB fail, ambiguity)
+* evidence requirement (snippets + DB result)
+* tool-use limits (query limits, whitelist)
+
+**NFRs (v1)**
+
+* latency expectations (p95)
+* reliability/degraded mode
+* audit/logging requirements
+
+**Output:** guardrails + NFR bullets that the epics must comply with.
+
+---
+
+### 6) RAID refresh + owners (5 min)
+
+Only top 8–10 items, tied to the epics and integrations.
+
+**Output:** updated RAID with owners + dates.
+
+---
+
+### 7) DS sign-off + next actions (5 min)
+
+Sign-off is on:
+
+* feasibility of the AOP v1 approach,
+* tightened epic scope/DoD,
+* contract/guardrails adequacy to proceed.
+
+**Output:** sign-off block + next steps.
+
+---
+
+## Confluence page structure (aligned to revisiting epics)
+
+1. **Purpose & Outcomes**
+2. **AOP v1 Overview (steps + fallbacks)**
+3. **Epic List (Revised)**
+
+   * Epic → AOP step mapping → DoD → dependencies → open questions
+4. **Data Contracts (Email + DB)**
+5. **Guardrails (v1)**
+6. **NFRs (v1)**
+7. **RAID (Top 10)**
+8. **Decisions & Sign-off**
+
+---
+
+If you paste your current epic list (even rough), I can **rewrite it into “tight epics”** in that format (AOP step mapping + DoD + dependencies + open questions) so you can drop it straight into Confluence.

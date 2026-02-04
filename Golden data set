@@ -1,0 +1,83 @@
+Yes, basically—but if you rely only on manually running live emails and waiting for human sign-off, it will be too slow to get started. You want to get to a "Golden Set" of ~50–100 perfect examples per AOP as fast as possible.
+
+Here is the most efficient way to build that dataset without drowning in manual work. It involves a mix of Historical Mining and Human Curation.
+
+1. The "Bootstrap" Strategy (Don't start from zero)
+Instead of waiting for new emails, look at your last 3 months of helpdesk tickets.
+
+Filter: Grab 500 closed tickets that look like they match your target AOP (e.g., "Account Verification").
+
+LLM Pre-Labeling (The Accelerator):
+
+Don't have a human read them yet.
+
+Pass the customer's original email into your new AOP Router.
+
+See if the Router agrees with how the human agent actually tagged/solved it historically.
+
+The "Agreement" Bucket:
+
+If Router Prediction == Historical Human Action, you automatically have a high-quality candidate.
+
+Action: Move these to the "To Be Verified" pile.
+
+The Human Review (The Sign-off):
+
+Now, give a human (SME) a batch of 50 of these "Agreement" examples.
+
+Their Job: They don't write anything. They just vote: "Is this a perfect example of how the new AOP should behave?"
+
+Result: If they click YES, that row goes into the Golden Dataset.
+
+2. Anatomy of a "Golden Row"
+A Golden Dataset for an AOP system is more complex than a standard chatbot dataset because you need to test the logic, not just the text.
+
+A single row in your Golden CSV/JSON needs three columns of "Truth":
+
+Column	What it tests	Example Data
+Input (Email)	The Trigger	"Hi, I need to check my balance."
+Truth A: Router	Classifier Accuracy	AOP_ID: ACCOUNT_VERIFY_v1
+Truth B: State	Extraction Accuracy	extracted_id: "none", sentiment: "neutral"
+Truth C: Outcome	Final Quality	Draft must include "Please provide ID" + Link to secure portal.
+Why this matters:
+
+Sometimes the Router is right (Truth A), but the AOP fails to extract the ID (Truth B).
+
+If you only check the final email (Truth C), you won't know why it failed.
+
+3. The "Mocking" Problem (Crucial for AOPs)
+There is a trap in AOP testing: Real data changes.
+
+Scenario: You add an email to the Golden Set today where the customer has a balance of $50.
+
+Next Month: You run the regression test. The customer has paid their bill; balance is now $0.
+
+Result: The test fails because the AOP wrote "$0" instead of "$50".
+
+The Solution: Synthetic Context Your Golden Dataset must include a "Mock Database State." When running the test suite, you tell the AOP: "Pretend the database returned Balance=$50 for this user." This ensures your tests pass even if the real customer data changes.
+
+4. How to Operationalize This (The Workflow)
+Select 20 "hero" examples from history that represent the happy path, the angry path, and the missing-data path.
+
+Run them through your AOP in "Debug Mode" (prints the logic, not just the draft).
+
+The "Correction" Phase:
+
+Sit with your DS/PO.
+
+Look at the trace.
+
+Correction: "The AOP asked for their ID, but they actually provided it in the footer. We need to fix the extraction step."
+
+Once fixed, save that Input + Expected Output as Golden Test Case #1.
+
+Repeat until you have 20 passing cases.
+
+Summary
+You do need human sign-off, but you shouldn't ask humans to "create" the data. Ask them to grade the data.
+
+Bad: "Please write 50 test emails and the correct responses." (Takes weeks, low motivation).
+
+Good: "Here are 50 historical emails and how our new AOP handled them. Mark 'Pass' or 'Fail' on the handling." (Takes hours, high accuracy).
+
+Next Step: To help you organize this, would you like a CSV Template for the Golden Dataset that includes columns for the Inputs, the Mocked DB Data, and the Expected Router/AOP outcomes?

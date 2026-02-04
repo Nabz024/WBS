@@ -1,324 +1,162 @@
-Perfect — that constraint actually makes this cleaner and more effective.
+## 1) One-page checklist (maps 1:1 to the Confluence page)
 
-Given:
+Copy/paste this as a checklist section (or turn into tasks).
 
-Agentic solution
+### A. Purpose + scope
+- [ ] Problem statement written in 3–5 lines
+- [ ] Current status captured (Discovery/Build, build started Y/N)
+- [ ] In-scope v1 agreed (bullets)
+- [ ] Out-of-scope v1 agreed (bullets)
+- [ ] Top assumptions listed (max 5)
 
-Primary input = email
+### B. End-to-end flow (pre-AOP)
+- [ ] Strawman E2E flow captured (7 steps max)
+- [ ] Thread policy decision logged (latest vs last N vs full chain) **or** explicitly “TBD”
+- [ ] “Abstain vs decide” principle captured (even if thresholds TBD)
+- [ ] Degraded-mode principle captured (what happens if email/DB unavailable)
 
-One external system queried
+### C. Requirements + guardrails
+**Functional**
+- [ ] FR list captured (P0/P1)
+- [ ] Clear statement on allowed actions (draft/route only, no auto-send)
 
-Team is ready to build, but you want to sharpen how they think
+**Guardrails (global)**
+- [ ] HITL policy defined (when required, who approves)
+- [ ] Action boundary defined (explicit “must not” list)
+- [ ] Abstain policy defined (when to route/ask for info)
+- [ ] Evidence policy defined (snippets/DB response required)
+- [ ] Privacy policy defined (redaction + retention)
+- [ ] Tool-use limits defined (max retries, timeouts, DB calls/email)
+- [ ] Prompt-injection handling policy defined
 
+**NFRs**
+- [ ] Latency target (p95) defined or “TBD + date”
+- [ ] Throughput target defined or “TBD + date”
+- [ ] Availability target + degraded mode defined
+- [ ] Auditability/logging minimum fields defined
+- [ ] Security/IAM approach (least privilege) captured
+- [ ] Cost control metric captured (DB calls/email)
 
-What you want is a guided walkthrough of the agent lifecycle, with the right questions embedded at each step, so the team internalises a repeatable structure they’ll reuse on every agent going forward.
+### D. Data & integration plan (contracts)
+**Email platform**
+- [ ] Access method + auth model
+- [ ] Mailbox/folder scope
+- [ ] Trigger mode (poll/push) + rate limits
+- [ ] Attachment policy stated (out of scope v1)
+- [ ] Idempotency/dedupe approach
+- [ ] Retention + replay approach
+- [ ] Open questions table completed (owner + due date)
 
-Below is a very practical session design, tuned exactly to your scenario.
+**DB verification**
+- [ ] Auth + environments (prod/UAT/sandbox)
+- [ ] Allowed query keys + allowed fields
+- [ ] Rate limits + latency expectations
+- [ ] Error handling + retries
+- [ ] Ambiguity policy (no match / multi match)
+- [ ] Open questions table completed (owner + due date)
 
+### E. Milestones / epics
+- [ ] Epic list agreed (E1–E7 or equivalent)
+- [ ] Dependencies per epic captured
+- [ ] Epic exit criteria (DoD) captured
+- [ ] Open questions that affect the plan listed
 
----
+### F. RAID (top 10)
+- [ ] Top 10 items max (no sprawling log)
+- [ ] Each has owner + mitigation + due date
+- [ ] Top 3 risks have explicit next action
 
-🎯 Objective of this Session
+### G. Test strategy (agentic-friendly)
+- [ ] Test levels defined (deterministic + behavioural)
+- [ ] Regression suite definition captured (what it is + when run)
+- [ ] Metrics list captured (routing, abstain, safety, DB, latency)
+- [ ] Eval set plan captured (source + size + coverage)
+- [ ] UAT entry criteria defined
+- [ ] UAT exit criteria defined
 
-Not to design the solution.
-
-But to ensure everyone understands:
-
-How the agent actually behaves end-to-end
-
-Where uncertainty, risk, and decisions live
-
-What questions must be answered before build vs during build
-
-
-
----
-
-🧭 The Core Mental Model (set this up first)
-
-Start the session by drawing this on a board:
-
-Email arrives
-   ↓
-Ingest & normalise
-   ↓
-Intent & context extraction
-   ↓
-Decision: can I act?
-   ↓
-External system query
-   ↓
-Compose response
-   ↓
-Human-in-the-loop (if needed)
-   ↓
-Send / log / learn
-
-Tell the team:
-
-> “We’re going to walk this once, slowly, and at each step ask
-‘what must be true for this to be safe, useful, and shippable?’”
-
-
-
-
----
-
-⏱️ Suggested Timing (75–90 mins)
-
-Framing: 5–10 mins
-
-Agent walkthrough (step-by-step): 45 mins
-
-Cross-cutting questions: 15 mins
-
-Close & actions: 10 mins
-
-
-
----
-
-🧠 Step-by-Step Walkthrough (This is the session)
-
-1️⃣ Email Ingest & Normalisation
-
-Ask the team:
-
-What counts as an email we should process?
-
-What are we explicitly not handling?
-
-How do we identify the request boundary (thread, chain, attachments)?
-
-What metadata matters (sender, domain, timestamp, thread ID)?
-
-
-Key delivery question:
-
-> “What breaks if this assumption is wrong?”
-
-
-
-🚩 Common hidden risk:
-
-Assuming emails are clean, single-intent, or well-formed
-
+### H. Decisions + actions
+- [ ] Decisions log updated (key scope constraints)
+- [ ] Actions list created (next 1–2 weeks) with owners/dates
 
 
 ---
 
-2️⃣ Intent & Context Extraction
+## 2) 90-minute workshop agenda (fills the page live)
 
-This is where agentic systems usually silently fail.
+**Attendees (minimum):** Delivery/PM, DS lead, Eng lead, platform host rep (email), DB owner rep (or proxy), security/compliance (optional but useful)  
+**Pre-read (sent ahead):** epic map, 10 sample emails (sanitised), known constraints, links to email/DB docs if available.
 
-Ask:
+### 0) Setup (before starting)
+Have the Confluence page open and share screen. You’re filling it in live.
 
-What intent labels exist today?
+### 1) Frame the session (5 min)
+**Goal:** “Realign on end-to-end and lock foundations (contracts + guardrails + test approach) so we can engage platform hosts crisply and continue build safely.”
 
-What happens if an email fits none or multiple intents?
+**Output sections filled:** 1) Purpose and current status
 
-How confident does the model need to be before acting?
+### 2) Scope re-confirmation (10 min)
+- In scope v1 (bullets)
+- Out of scope v1 (explicitly: attachments extraction out)
+- Assumptions (max 5)
 
-What contextual signals are mandatory vs nice-to-have?
+**Output sections filled:** 1) + 2)
 
+### 3) E2E flow walkthrough (15 min)
+Use one representative email and walk through the strawman flow:
+- ingest → normalise → infer intent → verify → draft/route → HITL → audit
+Capture key “TBD decisions” as you go (thread depth, abstain, degraded mode)
 
-Force a concrete answer to:
+**Output sections filled:** 2) End-to-end flow
 
-> “What does low confidence mean in code?”
+### 4) Data contracts + integration plan (25 min)
+Split time roughly:
+- **Email platform contract (12 min)**
+- **DB contract (13 min)**
 
+For each:
+- Fill the baseline contract bullets
+- Then fill the **Open questions** table with owner + due date (this is the real value)
 
+**Output sections filled:** 4) Data & integration plan
 
+### 5) Guardrails + NFRs (20 min)
+**Guardrails (12 min):** agree global policies (HITL, action boundary, abstain rule, evidence, privacy, tool limits, injection handling)  
+**NFRs (8 min):** pick targets or explicitly mark TBD with owner/date
 
----
+**Output sections filled:** 3) Requirements & guardrails (incl. NFRs)
 
-3️⃣ Decision Point: Can the Agent Act?
+### 6) Test strategy (10 min)
+Lock the minimum viable test approach:
+- deterministic tests (integration + logging)
+- behavioural eval + regression suite definition
+- initial metrics list
+- eval set plan (v0.1 size and coverage)
+- UAT entry/exit criteria (high level)
 
-Pause here deliberately.
+**Output sections filled:** 7) Test strategy
 
-Ask:
+### 7) RAID top 10 + owners (5 min)
+Rapid-fire: only capture the big ones.
+Assign owner + next action + due date.
 
-What conditions allow fully automated handling?
+**Output sections filled:** 6) RAID
 
-What conditions force human review?
+### 8) Milestones / epics sanity check (5 min)
+Confirm epics are still the right buckets and add exit criteria if missing.
 
-Is “do nothing” a valid outcome?
+**Output sections filled:** 5) Milestones / epics
 
+### 9) Close: decisions + actions (5 min)
+- Update decisions log (scope + HITL + attachment out)
+- Create the next 1–2 weeks actions with owners/dates
 
-This is the control point of the system.
-
-Write this explicitly:
-
-IF confidence ≥ X
-AND required fields present
-AND external system reachable
-THEN proceed
-ELSE escalate
-
-If they can’t articulate this → you’ve found a real gap.
-
-
----
-
-4️⃣ External System Query (Only One — Good)
-
-Zoom in hard here.
-
-Ask:
-
-What exactly are we asking the external system?
-
-What is the unique identifier and where does it come from?
-
-What are the failure modes (timeout, partial data, stale data)?
-
-Are we allowed to cache results?
-
-
-Critical delivery question:
-
-> “What happens to the user if this system is down?”
-
-
-
-This is where dependencies become delivery risks, not abstract concepts.
-
+**Output sections filled:** 8) + 9)
 
 ---
 
-5️⃣ Response Composition
-
-Ask:
-
-Is the response deterministic or variable?
-
-What constraints exist (tone, compliance, wording)?
-
-Can the agent explain why it answered this way?
-
-Do we need structured outputs or free text?
-
-
-Good forcing question:
-
-> “Could a human read this and understand the decision path?”
-
-
-
-
----
-
-6️⃣ Human-in-the-Loop
-
-Be very explicit here.
-
-Ask:
-
-When does a human step in?
-
-What information do they see?
-
-Can they correct the agent?
-
-Do corrections feed back into learning or rules?
-
-
-This separates:
-
-Assistive automation
-
-from delegated decision-making
-
-
-
----
-
-7️⃣ Logging, Audit, and Learning
-
-End the walkthrough with operations.
-
-Ask:
-
-What do we log per email?
-
-What lets us answer “why did this happen?”
-
-What metrics define success in week 1 vs month 3?
-
-How do we detect silent failure?
-
-
-If observability is vague → prod readiness isn’t there yet.
-
-
----
-
-🔁 Cross-Cutting Questions (Last 15 mins)
-
-Now zoom out and ask the whole room:
-
-What assumption makes you most nervous?
-
-What would you want alerted at 3am?
-
-What would you not automate yet?
-
-
-Capture answers as:
-
-Assumptions
-
-Risks
-
-Pre-build questions
-
-
-These go straight into RAID.
-
-
----
-
-📌 How You Close the Session
-
-End with something like:
-
-> “We’re green to build once these specific questions are answered.
-Anything else we’ll learn during build — but these are non-negotiable.”
-
-
-
-Then clearly mark:
-
-✅ Questions to answer before coding
-
-🟡 Questions acceptable to resolve during iteration
-
-
-
----
-
-🧩 Why This Works for Your Case
-
-Keeps focus on behaviour, not architecture
-
-Makes the single external dependency explicit and manageable
-
-Teaches the team a reusable agent walkthrough pattern
-
-Prevents “it worked in tests” surprises
-
-
-
----
-
-If you want next, I can:
-
-Turn this into a 1-page facilitation script
-
-Convert the steps into a Confluence page template
-
-Map this directly to UAT readiness vs Prod readiness
-
-Create a checklist engineers must complete before merging
-
-
-Just tell me which artefact you want.
+## Optional: a tight invite description (copy/paste)
+
+**Title:** E2E Realignment + Integration Readiness (Pre-AOP Foundations)  
+**Objective:** Align on system boundaries, guardrails, data contracts, test strategy, and top RAID items to unblock platform host conversations and proceed with build safely.  
+**Pre-read:** epic map + 10 sample emails (sanitised) + current assumptions list.  
+**Output:** updated Confluence “Foundations” page with owners/dates for all open questions.

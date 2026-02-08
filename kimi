@@ -1,0 +1,172 @@
+ I'll help you build these enterprise-grade project artifacts for your banking AI agent platform. Let me first search for the latest regulatory requirements and industry best practices for AI in banking to ensure our artifacts are current and compliant.  
+  Based on my research into current banking compliance requirements (SOC2, GDPR Article 22, AI Act) and enterprise AI security best practices, here are the comprehensive project artifacts for your cross-domain email automation platform:
+
+---
+
+## 1. FUNCTIONAL REQUIREMENTS: AOP ↔ BOR Interface
+
+### **FR-INT-001: Data Contract & Schema Governance**
+**Priority:** Critical  
+**Description:** The Agentic Operating Protocol (AOP) must interface with the Book of Record (BOR) through a strictly versioned data contract.  
+**Acceptance Criteria:**
+- All BOR queries must use OpenAPI 3.0+ specifications with field-level PII classification tags (`pii: true/false`, `sensitivity: critical/high/medium`)
+- AOPs must declare required BOR fields in their manifest; runtime access to undeclared fields triggers automatic denial
+- Schema drift detection: If BOR schema changes, affected AOPs enter "degraded mode" (human-in-the-loop required) until re-validation
+
+**AI Team View:** This enables business users to write AOPs without understanding BOR internals—they simply declare *what* data they need, and the interface layer handles *how* to retrieve it safely.
+
+### **FR-INT-002: Contextual Grounding API**
+**Priority:** Critical  
+**Description:** All AOP-generated email content involving financial data must be grounded in BOR records via Retrieval-Augmented Generation (RAG) with traceability.  
+**Acceptance Criteria:**
+- Every factual claim in generated text must include a `source_attribution` object: `{bor_record_id, field_path, timestamp, confidence_score}`
+- Grounding checks must validate: (a) data exists in BOR, (b) value matches within tolerance (for numeric data), (c) timestamp is within acceptable staleness window (default: 5 minutes for balances, 24 hours for KYC data)
+- Failed grounding checks trigger "fact-check required" status, routing to human reviewer
+
+**AI Team View:** Prevents hallucination of account balances, transaction amounts, or policy terms by enforcing "no data without provenance."
+
+### **FR-INT-003: Asynchronous BOR Query Handling**
+**Priority:** High  
+**Description:** AOPs must handle BOR latency gracefully without blocking email generation indefinitely.  
+**Acceptance Criteria:**
+- BOR queries timeout at 2 seconds (configurable per AOP); fallback to cached data with explicit "data as of [timestamp]" disclaimer
+- Circuit breaker pattern: After 3 consecutive BOR timeouts, AOP switches to "safe mode" using only pre-approved template responses
+- Queue depth monitoring: If BOR backlog exceeds 100ms p95 latency, workflow platform pauses new AOP activations
+
+**AI Team View:** Business users write AOPs assuming synchronous data; the interface layer abstracts async complexity and resilience patterns.
+
+### **FR-INT-004: Transactional Integrity for State Changes**
+**Priority:** Critical  
+**Description:** AOPs that trigger BOR updates (e.g., marking email as "responded") must maintain ACID properties.  
+**Acceptance Criteria:**
+- Two-phase commit: Email sent confirmation ↔ BOR status update must be atomic
+- If email dispatch succeeds but BOR update fails, automatic rollback with alert to operations team
+- Idempotency keys required for all BOR write operations to prevent duplicate processing
+
+### **FR-INT-005: Multi-Domain Data Isolation**
+**Priority:** High  
+**Description:** AOPs must respect data domain boundaries (Retail Banking, Wealth Management, Commercial Lending).  
+**Acceptance Criteria:**
+- BOR enforces field-level access control; AOP runtime context includes `domain_scope` claim from JWT
+- Cross-domain data requests (e.g., Retail AOP accessing Commercial data) require explicit allowlist entry + secondary approval
+- Query results filtered by domain; attempts to access unauthorized domains log security event
+
+---
+
+## 2. GUARDRAILS
+
+### **GR-PII-001: Dynamic Data Masking**
+**Category:** PII/Data Privacy  
+**Implementation:** BOR interface layer automatically applies masking based on AOP context and recipient verification.
+- **Full Masking:** SSN, Account Numbers (show last 4 only), IBAN (show last 4 only)
+- **Partial Masking:** Email addresses (show first 2 + domain), Phone numbers (show last 4)
+- **Conditional Reveal:** Only unmask if recipient identity verified via out-of-band channel (SMS OTP) within last 15 minutes
+- **Audit Trail:** All unmasking events logged with `requestor_aop_id`, `justification_context`, `approver_id` (if manual)
+
+**GDPR Alignment:** Implements data minimization (Article 5(1)(c)) and purpose limitation (Article 5(1)(b)).
+
+### **GR-PII-002: Right to Explanation (Article 22)**
+**Category:** GDPR Compliance  
+**Implementation:** For any email that constitutes "automated decision-making with legal/significant effect":
+- AOP must generate parallel "explanation payload" stored in BOR: `{decision_logic, key_factors, alternative_outcomes}`
+- Email footer includes: *"This decision was automated. You have the right to request human review, explanation of the logic, or contest this decision. [Request Review]"*
+- Human review requests create SLA-bound ticket (24h response) and pause automated follow-ups
+
+**AI Team View:** Business users mark AOPs as "Article 22 applicable" in manifest; platform auto-generates explanation scaffolding.
+
+### **GR-HAL-001: Financial Data Hallucination Detection**
+**Category:** Accuracy/Trust  
+**Implementation:** Multi-layer validation before email dispatch:
+
+| Layer | Check | Action on Failure |
+|-------|-------|-------------------|
+| 1. Structural | Regex validation for currency formats, date ranges, account number checksums | Reject generation, alert AOP owner |
+| 2. Semantic | Cross-reference numeric claims against BOR query results using symbolic math engine | Flag for human review |
+| 3. Consistency | Temporal logic checks (e.g., "payment due date" must be > "today") | Auto-correct with BOR data or escalate |
+| 4. Cross-Reference | For aggregate claims ("your total balance"), verify sum matches individual account BOR records | Reject generation |
+
+**Threshold:** 2+ layer failures = automatic block; 1 failure = warning + human review queue.
+
+### **GR-HAL-002: Confidence Scoring & Uncertainty Quantification**
+**Category:** Accuracy/Trust  
+**Implementation:**
+- AOP outputs include `confidence_score` (0.0-1.0) derived from grounding source diversity and model entropy
+- Scores < 0.85 trigger "draft mode": email held for human approval
+- Uncertain paraphrases (e.g., "approximately," "around") flagged if used for specific financial amounts
+
+### **GR-HIT-001: Human-in-the-Loop Triggers**
+**Category:** Oversight  
+**Mandatory Escalation Conditions:**
+- **Financial Impact:** Any email involving amounts > €10,000 (configurable per domain)
+- **Regulatory Risk:** Keywords detected ("complaint," "ombudsman," "lawyer," "regulator," "fraud")
+- **Sentiment Risk:** Customer input sentiment score < -0.7 (highly negative)
+- **Novelty:** AOP encounters scenario outside training distribution (detected via embedding distance > threshold)
+- **Override Attempt:** Customer explicitly requests human agent (bypass automation)
+- **Data Mismatch:** BOR returns conflicting data across queries (consistency check failure)
+
+**Workflow:** Trigger → Pause dispatch → Route to qualified human pool → Capture resolution feedback for AOP retraining.
+
+### **GR-SEC-001: Prompt Injection Defense**
+**Category:** Security  
+**Implementation:**
+- **Input Sanitization:** All customer email content parsed through `InjecGuard`-style classifier before reaching AOP context window 
+- **Context Isolation:** System prompt (AOP instructions) and user input separated with delimiters; AOP instructed to ignore delimiter-escaped content
+- **Output Validation:** Generated email scanned for "instruction leak" patterns (e.g., "ignore previous instructions," "system prompt:")
+- **Privilege Fencing:** AOPs operate with least-privilege BOR tokens; write access restricted to specific tables, row-level security enforced
+
+---
+
+## 3. RAID LOG
+
+### **RISKS**
+
+| ID | Risk | Likelihood | Impact | Mitigation Strategy | Owner |
+|----|------|------------|--------|---------------------|-------|
+| **R-001** | **BOR Latency Cascade:** High query latency causes AOP timeouts, triggering circuit breakers and overwhelming human review queues | Medium | High | Implement predictive caching layer; AOP pre-fetching for common queries; graceful degradation to templated responses | AI Platform |
+| **R-002** | **AOP Drift:** Business users update AOPs without re-validation, causing compliance violations or hallucination increase | High | Critical | Immutable AOP versioning; automated regression testing against compliance test suite; "sandbox" execution mode for new versions | AI Governance |
+| **R-003** | **GDPR Article 22 Violation:** Automated email decisions lack meaningful human oversight, exposing bank to 4% global revenue fines | Medium | Critical | Mandatory "Article 22 check" in AOP manifest; automated explanation generation; human review SLA enforcement | Legal/Compliance |
+| **R-004** | **Prompt Injection via Email:** Attacker embeds malicious instructions in customer email, causing AOP to exfiltrate data or send unauthorized responses | Medium | High | Defense-in-depth: input filtering, output scanning, privilege fencing, adversarial testing program  | AI Security |
+| **R-005** | **Cross-Domain Data Leak:** AOP written for Retail accidentally accesses Wealth Management BOR data due to misconfiguration | Low | Critical | Strict domain scoping in JWT claims; BOR row-level security; automated access pattern anomaly detection | Data Engineering |
+| **R-006** | **Model Hallucination in High-Stakes Context:** AOP generates incorrect interest rate or fee information, causing financial harm | Medium | Critical | Grounding enforcement (FR-INT-002); symbolic math validation; human-in-the-loop for all rate/fee communications | AI Platform |
+
+### **ASSUMPTIONS**
+
+| ID | Assumption | Validation Method | Impact if Invalid |
+|----|------------|-------------------|-------------------|
+| **A-001** | BOR provides sub-100ms p95 query latency for standard lookups | Performance testing in pre-prod; SLA monitoring in production | AOP timeouts increase, degrading customer experience |
+| **A-002** | Business users can write AOPs using provided DSL without understanding LLM internals | Usability testing; AOP quality metrics (escalation rate, error rate) | Increased AI Team burden for AOP authoring; deployment bottlenecks |
+| **A-003** | Human review capacity scales linearly with automated decision volume | Capacity planning model; queue depth monitoring | SLA breaches for Article 22 human intervention requests |
+| **A-004** | Grounding sources (BOR data) are authoritative and tamper-evident | BOR audit logging; checksum verification | Hallucination detection false negatives; compliance violations |
+| **A-005** | Workflow platform provides exactly-once delivery semantics for email dispatch | Integration testing; idempotency key validation | Duplicate emails sent; customer trust erosion |
+
+### **ISSUES**
+
+| ID | Issue | Status | Resolution Target | Action Items |
+|----|-------|--------|-------------------|--------------|
+| **I-001** | **Explainability vs. Performance Trade-off:** High-performing LLMs lack interpretability required for Article 22 explanations | Open | Q2 2024 | Evaluate hybrid approach: GPT-4 for generation, smaller interpretable model for explanation extraction; implement LIME/SHAP for local explanations  |
+| **I-002** | **AOP Version Control:** No current system for branching/merging AOP logic; business users editing production AOPs directly | In Progress | Q1 2024 | Deploy GitOps workflow for AOPs; require PR review for production changes; implement blue/green deployment |
+| **I-003** | **BOR Schema Documentation:** Incomplete field-level PII classification in legacy BOR tables | Open | Q3 2024 | Data catalog initiative; automated PII scanning; manual classification backlog |
+| **I-004** | **Human Reviewer Qualification:** Unclear competency requirements for staff approving AI-generated financial communications | Open | Q1 2024 | Define role-based certification (Retail vs. Wealth); implement decision support tools for reviewers |
+
+### **DEPENDENCIES**
+
+| ID | Dependency | Type | Risk Level | Contingency |
+|----|------------|------|------------|-------------|
+| **D-001** | **Workflow Platform API Stability:** AOP runtime depends on workflow platform's event streaming and state management | External | High | Abstract workflow interface; maintain adapter layer for potential migration; SLA penalties for breaking changes |
+| **D-002** | **BOR Real-Time Sync:** AOP accuracy depends on BOR replication lag < 5 seconds for transaction data | Internal | Medium | Implement staleness detection in queries; fallback to "pending update" messaging |
+| **D-003** | **LLM Provider Availability:** Core generation capabilities depend on Azure OpenAI/Anthropic API uptime | External | High | Multi-provider failover (Azure → AWS Bedrock → on-prem Llama); local caching of common responses |
+| **D-004** | **Compliance Sign-off:** AOP deployment blocked until Legal validates Article 22 safeguards | Internal | Medium | Pre-approved AOP templates for common scenarios; "safe harbor" fast-track for low-risk use cases |
+| **D-005** | **Identity Provider (IdP):** PII unmasking depends on customer authentication status from IdP | External | Medium | Default to masked mode; async unmasking after auth verification |
+
+---
+
+## AI TEAM STRATEGIC ENABLERS
+
+To achieve the "business users write AOPs" vision without breaking the system, the AI Team must deliver:
+
+1. **AOP SDK & Sandbox:** Local testing environment with mock BOR, hallucination detection preview, and compliance linter
+2. **Automated Guardrail Injection:** Business users write *what* the AOP should do; platform auto-injects *how* to do it safely (PII masking, grounding checks, HITL triggers)
+3. **Observability by Design:** Every AOP execution produces structured logs for compliance auditing, model performance tracking, and business user feedback loops
+4. **Progressive Exposure:** New AOPs start with 100% human review, graduating to higher automation as performance metrics prove reliability
+
+This architecture transforms the AI Team from "gatekeepers" to "platform enablers"—providing the guardrails and tooling that allow business domain experts to safely operationalize their expertise at scale.

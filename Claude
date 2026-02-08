@@ -1,0 +1,999 @@
+# AI EMAIL AUTOMATION INITIATIVE
+## Merged Artefact Pack - Governance Review Version
+
+---
+
+# 1️⃣ EXECUTIVE SUMMARY
+
+## What Changed
+
+**Integration Approach**: Pack A provided highly detailed technical specifications for the AOP↔BOR interface that were absent in Pack B. These have been integrated as implementation-level requirements within Pack B's broader requirements framework.
+
+**Governance Maturity**: Pack B's comprehensive governance structure (RACI, ADRs, testing strategy, rollout plan) has been retained as the primary framework, with Pack A's technical controls embedded within it.
+
+**Compliance Depth**: Pack A's GDPR Article 22 implementation details and specific PII handling mechanisms have been merged into Pack B's compliance framework, elevating the technical specificity of guardrails.
+
+**Risk Granularity**: RAID entries from both packs have been consolidated, preserving unique risks while merging overlapping concerns. Pack A's more technical risks complement Pack B's strategic risks.
+
+## What Was Kept
+
+**From Pack B (Baseline Structure)**:
+- Overall document organization (Requirements, Guardrails, RAID, PM Artifacts)
+- Executive-friendly narrative format
+- RACI matrix and organizational accountability
+- Architecture decision records framework
+- Phased rollout strategy (Phases 1-4)
+- Broader regulatory compliance coverage (beyond GDPR)
+- Success metrics and KPI framework
+
+**From Pack A (Technical Depth)**:
+- Specific functional requirements for AOP-BOR interface (FR-INT-001 through FR-INT-005)
+- Detailed guardrail implementations (GR-PII-001, GR-HAL-001, GR-HIT-001, GR-SEC-001)
+- Precise technical thresholds and validation logic
+- Multi-layer hallucination detection approach
+- Prompt injection defense mechanisms
+- AI Team strategic enablers (SDK, sandbox, automated guardrail injection)
+
+## What Was Discarded
+
+**From Pack A**:
+- Standalone structure - integrated into Pack B's framework instead
+- Some duplicate RAID entries (merged into Pack B's more descriptive format)
+
+**From Pack B**:
+- Generic compliance language where Pack A provided superior technical specificity
+- Some higher-level requirements now superseded by Pack A's detailed interface specs
+
+## Unresolved Decisions Requiring Steering Committee Input
+
+| Decision ID | Decision Required | Options | Impact | Recommendation |
+|-------------|------------------|---------|--------|----------------|
+| **DEC-001** | **AOP Authorship Model** | A: Business users write AOPs directly with AI Team providing SDK/sandbox (Pack A model)<br>B: AI Team develops AOPs with business user input (Pack B model) | Affects resource planning, training investment, time-to-value | **Recommend hybrid**: Start with AI Team authorship (Phase 1-2), transition to business user authorship with SDK (Phase 3-4) |
+| **DEC-002** | **BOR Query SLA Targets** | A: Sub-100ms p95 latency (Pack A)<br>B: General "performant" language (Pack B) | Affects infrastructure investment, BOR team commitments | **Recommend**: Adopt Pack A's 100ms target with graduated SLA by phase |
+| **DEC-003** | **Human Review Financial Threshold** | A: €10,000 (Pack A)<br>B: Unspecified (Pack B) | Affects operational load, risk exposure | **Recommend**: €10,000 for Phases 1-2, review for adjustment in Phase 3 based on data |
+| **DEC-004** | **GDPR Article 22 Scope** | A: All automated decisions (Pack A strict interpretation)<br>B: Subset of high-impact decisions (Pack B pragmatic) | Affects development complexity, legal risk | **Recommend**: Legal team to define "legal/significant effect" criteria; implement Pack A's explanation framework for that subset |
+
+---
+
+# 2️⃣ MERGED ARTEFACT PACK
+
+---
+
+## SECTION 1: OVERVIEW & OBJECTIVES
+
+### 1.1 Programme Vision
+
+Deploy an enterprise-scale AI-powered email automation platform enabling automated, compliant responses to customer and internal emails within the regulated banking environment. The system integrates with existing workflow platforms and book of record (BOR) databases while enabling Agentic Operating Protocols (AOPs) that can be authored by business users (target state) or AI Team (initial state).
+
+### 1.2 Strategic Objectives
+
+1. **Operational Efficiency**: Reduce average email response time by 50%+ while achieving 60% automation rate within 6 months of domain deployment
+2. **Scalability**: Deploy horizontally across all business domains (Retail, Wealth Management, Commercial) without architectural redesign
+3. **Compliance**: Maintain zero critical regulatory violations while operating in highly regulated environment (GDPR, banking regulations)
+4. **Business Enablement**: Transform AI Team from gatekeepers to platform enablers, allowing domain experts to operationalize their expertise safely
+5. **Trust & Accuracy**: Achieve 90%+ response accuracy through grounded generation and multi-layer validation
+
+### 1.3 Success Criteria
+
+| Metric Category | Target | Measurement Approach |
+|----------------|--------|---------------------|
+| **Technical Performance** | 99.9% availability, <5s p95 latency, <1% error rate | Automated monitoring |
+| **Business Outcomes** | 60% automation rate, 50% response time reduction, positive ROI | Quarterly business reviews |
+| **Quality & Safety** | 90% accuracy, <10% false escalation, zero compliance violations, <1% hallucination rate | Human evaluation + audits |
+| **User Experience** | Customer satisfaction ≥ manual baseline, Business user satisfaction >4/5 | Surveys + NPS |
+
+---
+
+## SECTION 2: ROADMAP & PHASES
+
+### Phase 0: Foundation & Technical Build (Months 1-3)
+
+**Objective**: Establish technical foundation and complete governance approvals
+
+**Key Deliverables**:
+- Agent framework core services (microservices architecture per ADR-003)
+- AOP-BOR interface layer with data contracts (FR-INT-001 through FR-INT-005)
+- Security & compliance reviews approved
+- AOP SDK & Sandbox for business user testing (if pursuing authorship model A)
+- Automated guardrail injection system
+- Monitoring & observability infrastructure
+
+**Exit Criteria**:
+- All integration tests passing
+- Security architecture approval obtained
+- BOR data quality assessment completed
+- Human review workflow operational
+- Compliance policies published
+
+### Phase 1: Controlled Pilot (Months 4-6)
+
+**Objective**: Deploy first production AOP validating end-to-end system
+
+**Scope**: Single domain, single protocol, straightforward use case
+
+**Deployment Pattern**:
+- Week 1-2: Shadow mode (100% human review of AI outputs)
+- Week 3-4: 10% automation with full monitoring
+- Week 5-8: Progressive increase to 25%, 50%, then full automation based on metrics
+- Intensive monitoring with daily quality reviews
+
+**Success Metrics** (must sustain for 4 weeks):
+- Accuracy >90%
+- Customer satisfaction ≥ manual baseline
+- Zero compliance violations
+- Escalation precision <10% false positives
+
+### Phase 2: Pilot Expansion (Months 7-9)
+
+**Objective**: Validate multi-domain scalability
+
+**Scope**: 3 additional domains, staggered starts
+
+**Key Validations**:
+- AOP authorship model effectiveness (business user vs. AI Team)
+- Operational support model at scale
+- Infrastructure auto-scaling
+- Cross-domain data isolation (GR-PII-001, FR-INT-005)
+
+### Phase 3: Enterprise Scaling (Months 10-18)
+
+**Objective**: Systematic rollout across all suitable domains
+
+**Cadence**: ~2 domains/month at steady state
+
+**Governance**:
+- Demand management process for domain enrollment
+- Standardized onboarding (workshops, training, testing, deployment)
+- Community of practice for knowledge sharing
+- Quarterly fairness audits
+
+### Phase 4: Continuous Optimization (Month 18+)
+
+**Objective**: Sustained value delivery and platform evolution
+
+**Focus Areas**:
+- Model performance optimization
+- Expanded use case coverage
+- Advanced AOP capabilities
+- Regulatory adaptation as guidance evolves
+
+---
+
+## SECTION 3: REQUIREMENTS
+
+### 3.1 Functional Requirements - Core Capabilities
+
+#### 3.1.1 Agent Framework Capabilities (from Pack B)
+
+**REQ-001: Natural Language Understanding**
+- Extract intent, entities, and context from incoming emails
+- Handle multi-turn conversation threads with context preservation
+- Support multiple languages where business domains require
+
+**REQ-002: Response Generation**
+- Leverage large language models with RAG pattern (per ADR-002)
+- Template management and output formatting controls
+- Tone and style consistency across domains
+
+**REQ-003: Multi-Step Reasoning**
+- Execute conditional logic defined in AOPs
+- Orchestrate multiple BOR queries and information synthesis
+- Support human-in-the-loop checkpoints
+
+### 3.1.2 AOP-BOR Interface Requirements (from Pack A - Enhanced Specificity)
+
+**FR-INT-001: Data Contract & Schema Governance** [CRITICAL]
+
+The AOP must interface with BOR through strictly versioned data contracts:
+
+- **Schema Specification**: All BOR queries use OpenAPI 3.0+ with field-level PII tags (`pii: true/false`, `sensitivity: critical/high/medium`)
+- **Declaration Model**: AOPs declare required BOR fields in manifest; runtime access to undeclared fields triggers automatic denial
+- **Drift Detection**: BOR schema changes trigger affected AOPs into "degraded mode" (mandatory human review) until re-validation completes
+- **AI Team Responsibility**: Maintain data contract registry, version management, backward compatibility testing
+- **Business User View**: Declare *what* data needed, platform handles *how* to retrieve safely
+
+**FR-INT-002: Contextual Grounding API** [CRITICAL]
+
+All AOP-generated content involving financial data must be grounded in BOR with full traceability:
+
+- **Source Attribution**: Every factual claim includes metadata: `{bor_record_id, field_path, timestamp, confidence_score}`
+- **Grounding Validation**: 
+  - Data exists in BOR
+  - Value matches within tolerance (configurable per field type)
+  - Timestamp within staleness window (5min for balances, 24hr for KYC data)
+- **Failure Handling**: Failed grounding checks → "fact-check required" status → human reviewer queue
+- **Implementation**: Retrieval-Augmented Generation pattern (ADR-002) with citation linking
+
+**FR-INT-003: Asynchronous BOR Query Handling** [HIGH]
+
+AOPs must handle BOR latency gracefully:
+
+- **Timeout Management**: BOR queries timeout at 2s (configurable per AOP); fallback to cached data with explicit disclaimer: "Data as of [timestamp]"
+- **Circuit Breaker**: After 3 consecutive timeouts → AOP "safe mode" using pre-approved templates only
+- **Backpressure**: If BOR p95 latency >100ms → workflow platform pauses new AOP activations
+- **AI Team Responsibility**: Abstract async complexity from business users
+
+**FR-INT-004: Transactional Integrity** [CRITICAL]
+
+AOPs triggering BOR updates must maintain ACID properties:
+
+- **Two-Phase Commit**: Email dispatch ↔ BOR status update must be atomic
+- **Rollback**: Email sent + BOR update failed → automatic rollback with ops team alert
+- **Idempotency**: All BOR write operations require idempotency keys preventing duplicate processing
+
+**FR-INT-005: Multi-Domain Data Isolation** [HIGH]
+
+AOPs must respect domain boundaries:
+
+- **Access Control**: BOR enforces field-level permissions; AOP runtime JWT includes `domain_scope` claim
+- **Cross-Domain Requests**: Require explicit allowlist entry + secondary approval
+- **Query Filtering**: Results filtered by domain; unauthorized access attempts → security event log
+- **Domains**: Retail Banking, Wealth Management, Commercial Lending (extensible)
+
+### 3.1.3 AOP Framework Requirements
+
+**REQ-010: Protocol Development Interface**
+- Declarative DSL or low-code interface for business users (target state)
+- Version control integration with approval workflows
+- Testing sandbox with mock BOR (AI Team strategic enabler)
+- Compliance linter validating against guardrails pre-deployment
+
+**REQ-011: Protocol Validation & Testing**
+- Automated regression testing against compliance test suite
+- "Sandbox execution mode" for new protocol versions
+- Performance profiling (query count, latency, resource usage)
+- Bias testing across demographic groups
+
+**REQ-012: Protocol Governance**
+- Immutable versioning with blue/green deployment
+- Review/approval workflow before production
+- Performance monitoring per protocol (accuracy, escalation rate, error rate)
+- Rollback capability
+
+### 3.2 Non-Functional Requirements
+
+**NFR-001: Performance** (from Pack B with Pack A enhancements)
+- System availability: 99.9% during business hours
+- Processing latency: <5s p95 for automated responses
+- BOR query latency: <100ms p95 for standard lookups (Pack A target)
+- Throughput: 1,000 emails/hour/instance with linear horizontal scaling
+
+**NFR-002: Security**
+- Defense-in-depth architecture
+- Mutual TLS for all API communications
+- Encryption at rest and in transit
+- Least-privilege access with JWT-based authorization
+- Prompt injection defenses (GR-SEC-001)
+
+**NFR-003: Reliability**
+- Fault tolerance with circuit breakers
+- Automated failover (RTO <15min, RPO <15min)
+- Graceful degradation to templated responses
+- Chaos engineering validation
+
+**NFR-004: Scalability**
+- Microservices architecture (ADR-003)
+- Stateless services enabling horizontal scaling
+- Auto-scaling based on queue depth and latency metrics
+- Multi-region deployment capability
+
+---
+
+## SECTION 4: GUARDRAILS & COMPLIANCE FRAMEWORK
+
+### 4.1 Data Privacy & PII Controls
+
+#### GR-PII-001: Dynamic Data Masking [CRITICAL]
+
+**Implementation** (from Pack A):
+
+BOR interface layer applies automatic masking based on AOP context and recipient verification:
+
+| Data Type | Masking Rule | Reveal Condition |
+|-----------|--------------|------------------|
+| SSN | Show last 4 only | Recipient verified via SMS OTP <15min ago |
+| Account Numbers | Show last 4 only | Recipient verified via SMS OTP <15min ago |
+| IBAN | Show last 4 only | Recipient verified via SMS OTP <15min ago |
+| Email Addresses | Show first 2 chars + domain | Conditional based on context |
+| Phone Numbers | Show last 4 digits | Conditional based on context |
+
+**Audit Trail**: All unmasking events logged with:
+- `requestor_aop_id`
+- `justification_context`
+- `approver_id` (if manual override)
+- Timestamp and recipient verification method
+
+**Regulatory Alignment**: GDPR Article 5(1)(c) data minimization, Article 5(1)(b) purpose limitation
+
+**AI Team Responsibility**: Maintain masking rule engine; business users declare data needs, masking applied automatically
+
+#### GR-PII-002: GDPR Article 22 - Right to Explanation [CRITICAL]
+
+**Scope**: Any email constituting "automated decision-making with legal or significant effect"
+
+**Implementation**:
+- AOP manifest flag: `article22_applicable: true/false`
+- Platform auto-generates explanation payload stored in BOR: `{decision_logic, key_factors, alternative_outcomes}`
+- Email footer auto-injected: *"This decision was automated. You have the right to request human review, explanation, or contest this decision. [Request Review]"*
+- Human review requests → SLA-bound ticket (24h response) + pause automated follow-ups
+
+**AI Team Responsibility**: Explanation scaffolding generation; business users mark applicability in manifest
+
+**DECISION REQUIRED** (DEC-004): Legal team to define precise criteria for "legal/significant effect" in banking context
+
+### 4.2 Accuracy & Hallucination Prevention
+
+#### GR-HAL-001: Multi-Layer Financial Data Validation [CRITICAL]
+
+**Implementation** (from Pack A with Pack B integration):
+
+Four-layer validation pipeline before email dispatch:
+
+| Layer | Validation Type | Check | Action on Failure |
+|-------|----------------|-------|-------------------|
+| 1 | **Structural** | Regex for currency formats, date ranges, account checksums | Reject generation, alert AOP owner |
+| 2 | **Semantic** | Cross-reference numeric claims vs. BOR using symbolic math engine | Flag for human review |
+| 3 | **Consistency** | Temporal logic (e.g., due date > today) | Auto-correct with BOR or escalate |
+| 4 | **Cross-Reference** | Aggregate claims match individual BOR records | Reject generation |
+
+**Threshold**: 
+- 2+ layer failures → automatic block
+- 1 failure → warning + human review queue
+
+**Measurement**: Track layer-specific failure rates; tune thresholds quarterly based on false positive analysis
+
+#### GR-HAL-002: Confidence Scoring & Uncertainty Quantification [CRITICAL]
+
+**Implementation**:
+- Every AOP output includes `confidence_score` (0.0-1.0) derived from:
+  - Grounding source diversity
+  - Model entropy
+  - Historical accuracy for similar queries
+- **Threshold**: Scores <0.85 → "draft mode" (human approval required)
+- **Language Enforcement**: Flag uncertain paraphrases ("approximately," "around") for specific financial amounts
+- **Learning Loop**: Human reviewer feedback updates confidence calibration
+
+**Integration with FR-INT-002**: Grounding API provides per-claim confidence; aggregate score determines dispatch decision
+
+### 4.3 Human Oversight Controls
+
+#### GR-HIT-001: Human-in-the-Loop Mandatory Triggers [CRITICAL]
+
+**Automatic Escalation Conditions** (from Pack A):
+
+| Trigger Type | Condition | Rationale |
+|-------------|-----------|-----------|
+| **Financial Impact** | Amount >€10,000 (configurable per domain) | Risk mitigation for high-value decisions |
+| **Regulatory Keywords** | Detection of: "complaint," "ombudsman," "lawyer," "regulator," "fraud" | Reputational/legal risk |
+| **Sentiment Risk** | Customer input sentiment <-0.7 (highly negative) | Customer satisfaction protection |
+| **Novelty Detection** | Scenario outside training distribution (embedding distance >threshold) | Unknown-unknown handling |
+| **Explicit Override** | Customer requests human agent | Respect customer preference |
+| **Data Mismatch** | BOR returns conflicting data across queries | Data integrity concern |
+| **Low Confidence** | Confidence score <0.85 (GR-HAL-002) | Accuracy protection |
+
+**Workflow**: Trigger detected → Pause dispatch → Route to qualified reviewer pool → Capture feedback for model retraining
+
+**SLA**: Human review completed within 4 hours (business hours) or 24 hours (after hours) for non-urgent; 1 hour for regulatory keyword triggers
+
+### 4.4 Security Controls
+
+#### GR-SEC-001: Prompt Injection Defense [HIGH]
+
+**Defense-in-Depth Approach** (from Pack A):
+
+1. **Input Sanitization**: Customer email parsed through injection classifier before reaching AOP context
+2. **Context Isolation**: System prompt and user input separated with delimiters; AOP instructed to ignore delimiter-escaped content
+3. **Output Validation**: Generated email scanned for instruction leak patterns ("ignore previous instructions," "system prompt:")
+4. **Privilege Fencing**: AOPs operate with least-privilege BOR tokens:
+   - Write access restricted to specific tables
+   - Row-level security enforced
+   - No admin/schema modification permissions
+
+**Testing**: Quarterly red team exercises with adversarial prompting scenarios
+
+**Monitoring**: Log all suspected injection attempts; alert security team on patterns
+
+### 4.5 Compliance Monitoring & Audit
+
+**Audit Trail Requirements**:
+- Complete logging of: email receipt, BOR queries, grounding checks, confidence scores, human reviews, final responses
+- Tamper-evident logs with cryptographic checksums
+- Retention: 7 years (regulatory requirement)
+- Real-time compliance dashboard for governance committee
+
+**Bias Monitoring**:
+- Quarterly fairness audits across protected demographics
+- Statistical testing for disparate outcomes (response quality, escalation rates, processing times)
+- Remediation within 30 days of confirmed bias finding
+
+---
+
+## SECTION 5: RAID LOG
+
+### 5.1 RISKS
+
+#### Technical Risks
+
+**R-T01: Model Performance Degradation**
+- **Description**: Deployed LLMs experience drift due to data distribution shifts, adversarial inputs, or model decay
+- **Likelihood**: Medium (3/5) - Data patterns evolve continuously
+- **Impact**: High (4/5) - Degrades accuracy, increases human review load, potential compliance exposure
+- **Risk Score**: 12 (Medium-High)
+- **Mitigation**:
+  - Daily performance monitoring with automated alerting (baselines per domain)
+  - Quarterly model retraining with fresh data
+  - Rapid rollback procedures to previous versions
+  - A/B testing for model updates
+- **Owner**: AI Team - Model Operations Lead
+- **Status**: Monitoring infrastructure 60% complete
+
+**R-T02: BOR Latency Cascade** (from Pack A)
+- **Description**: High BOR query latency causes AOP timeouts → circuit breakers trigger → human review queues overwhelmed
+- **Likelihood**: Medium (3/5) - Complex enterprise systems prone to performance variability
+- **Impact**: High (4/5) - Degrades customer experience, reduces automation value
+- **Risk Score**: 12 (Medium-High)
+- **Mitigation**:
+  - Predictive caching layer for common queries (FR-INT-003)
+  - AOP pre-fetching optimization
+  - Graceful degradation to templated responses
+  - BOR performance SLA with escalation triggers (<100ms p95)
+- **Owner**: AI Platform Team + BOR Team
+- **Status**: Caching architecture in design phase
+
+**R-T03: Integration Failure with BOR Systems**
+- **Description**: API incompatibility, performance bottlenecks, data format mismatches, or authentication failures during integration
+- **Likelihood**: Medium (3/5) - Complex enterprise integrations often reveal unexpected challenges
+- **Impact**: Very High (5/5) - System cannot operate without BOR access
+- **Risk Score**: 15 (High)
+- **Mitigation**:
+  - Early POC integration testing (Phase 0)
+  - Documented API contracts with BOR team (FR-INT-001)
+  - Comprehensive integration test suite
+  - Service level agreements for BOR availability
+  - Fallback to cached/templated responses
+- **Owner**: AI Team - Integration Architect
+- **Status**: POC testing scheduled Q1 exit
+
+**R-T04: Scalability Limitations**
+- **Description**: Framework encounters performance constraints at production email volumes
+- **Likelihood**: Medium (3/5) - Complex AI systems often reveal bottlenecks under load
+- **Impact**: High (4/5) - Undermines business case, may require expensive redesign
+- **Risk Score**: 12 (Medium-High)
+- **Mitigation**:
+  - Comprehensive load testing pre-launch (testing strategy Section 5.5)
+  - Microservices architecture for horizontal scaling (ADR-003)
+  - Auto-scaling policies with capacity planning
+  - Resource utilization monitoring
+- **Owner**: AI Team - Infrastructure Lead
+- **Status**: Load testing framework development in progress
+
+#### Security & Compliance Risks
+
+**R-S01: Data Breach or Unauthorized Access**
+- **Description**: Security vulnerabilities enable unauthorized access to sensitive customer data or system compromise
+- **Likelihood**: Low (2/5) - Strong controls reduce probability but AI systems have novel attack surfaces
+- **Impact**: Catastrophic (5/5) - Regulatory penalties, customer notification, reputational damage, litigation
+- **Risk Score**: 10 (Medium)
+- **Mitigation**:
+  - Defense-in-depth security (GR-SEC-001)
+  - Quarterly penetration testing
+  - Strict access controls with least-privilege
+  - Encryption at rest and in transit
+  - Security monitoring and anomaly detection
+  - Incident response procedures
+- **Owner**: AI Team Lead + CISO
+- **Status**: Security architecture review 70% complete
+
+**R-S02: GDPR Article 22 Violation** (from Pack A, enhanced)
+- **Description**: Automated decisions lack meaningful human oversight, exposing bank to GDPR Article 22 fines (up to 4% global revenue)
+- **Likelihood**: Medium (3/5) - Complex regulatory interpretation, novel technology
+- **Impact**: Critical (5/5) - Massive financial penalties, regulatory restrictions
+- **Risk Score**: 15 (High)
+- **Mitigation**:
+  - Mandatory Article 22 check in AOP manifest (GR-PII-002)
+  - Automated explanation generation
+  - Human review SLA enforcement (24h)
+  - Legal team guidance on "legal/significant effect" criteria (DEC-004)
+  - Proactive regulator communication
+- **Owner**: AI Team Lead + Chief Compliance Officer
+- **Status**: Implementation framework 40% complete; awaiting legal criteria definition
+
+**R-S03: Prompt Injection Attack** (from Pack A)
+- **Description**: Attacker embeds malicious instructions in customer email, causing AOP to exfiltrate data or send unauthorized responses
+- **Likelihood**: Medium (3/5) - AI systems are known targets for adversarial attacks
+- **Impact**: High (4/5) - Data breach, unauthorized communications, reputational harm
+- **Risk Score**: 12 (Medium-High)
+- **Mitigation**:
+  - Multi-layer defense (GR-SEC-001): input filtering, output scanning, privilege fencing
+  - Quarterly adversarial testing program
+  - Security training for AOP authors
+  - Monitoring for injection patterns
+- **Owner**: AI Security Team
+- **Status**: Initial defenses implemented; red team testing Q2
+
+**R-S04: Cross-Domain Data Leak** (from Pack A)
+- **Description**: AOP accesses unauthorized BOR data across domain boundaries due to misconfiguration
+- **Likelihood**: Low (2/5) - Strong technical controls but human error possible
+- **Impact**: Critical (5/5) - Regulatory violation, customer privacy breach, insider threat concerns
+- **Risk Score**: 10 (Medium)
+- **Mitigation**:
+  - Strict domain scoping in JWT claims (FR-INT-005)
+  - BOR row-level security enforcement
+  - Automated access pattern anomaly detection
+  - Regular access reviews
+- **Owner**: Data Engineering + AI Platform
+- **Status**: Access control framework designed; implementation Q1
+
+**R-S05: Bias and Discrimination**
+- **Description**: AI generates biased responses discriminating against protected demographics, violating fair lending/civil rights laws
+- **Likelihood**: Medium (3/5) - LLMs can perpetuate societal biases
+- **Impact**: Very High (5/5) - Regulatory violations, litigation, customer harm
+- **Risk Score**: 15 (High)
+- **Mitigation**:
+  - Ongoing bias monitoring across demographics
+  - Representative training data curation
+  - Quarterly fairness audits by independent reviewers
+  - Bias review for all AOPs
+  - Training for protocol authors
+- **Owner**: AI Team - Responsible AI Lead
+- **Status**: Bias monitoring framework design phase
+
+**R-S06: Model Hallucination in High-Stakes Context** (from Pack A)
+- **Description**: AOP generates incorrect financial information (rates, fees, balances) causing customer harm
+- **Likelihood**: Medium (3/5) - LLM hallucination is documented risk
+- **Impact**: Critical (5/5) - Financial harm, regulatory violations, trust erosion
+- **Risk Score**: 15 (High)
+- **Mitigation**:
+  - Grounding enforcement (FR-INT-002, ADR-002)
+  - Multi-layer validation (GR-HAL-001)
+  - Human-in-the-loop for rates/fees (GR-HIT-001)
+  - Confidence scoring (GR-HAL-002)
+- **Owner**: AI Platform Team
+- **Status**: RAG implementation 50% complete
+
+#### Operational Risks
+
+**R-O01: Insufficient Business User Adoption**
+- **Description**: Business teams hesitant to adopt due to AI distrust, job displacement concerns, or complexity
+- **Likelihood**: Medium (3/5) - Organizational change historically difficult
+- **Impact**: High (4/5) - Limited adoption undermines ROI
+- **Risk Score**: 12 (Medium-High)
+- **Mitigation**:
+  - Comprehensive change management program
+  - Intuitive protocol development tools (AOP SDK)
+  - Early pilot success stories
+  - Hands-on AI Team support
+  - Address job concerns transparently (augmentation not replacement)
+  - Community of practice
+- **Owner**: AI Team Lead + Change Management
+- **Status**: Change plan 30% complete
+
+**R-O02: AOP Drift** (from Pack A)
+- **Description**: Business users update AOPs without re-validation, causing compliance violations or quality degradation
+- **Likelihood**: High (4/5) - Without governance, uncontrolled changes likely
+- **Impact**: Critical (5/5) - Regulatory exposure, accuracy failures
+- **Risk Score**: 20 (Critical)
+- **Mitigation**:
+  - Immutable AOP versioning (REQ-012)
+  - Automated regression testing against compliance test suite
+  - "Sandbox execution mode" for new versions
+  - GitOps workflow with PR reviews
+  - Blue/green deployment
+- **Owner**: AI Governance + Platform Team
+- **Status**: Version control system implementation Q1
+
+**R-O03: Inadequate Operational Support**
+- **Description**: AI Team lacks resources to support multi-domain scale
+- **Likelihood**: Medium (3/5) - New operational models often underestimate requirements
+- **Impact**: Medium (3/5) - Degrades reliability, frustrates users, limits scaling
+- **Risk Score**: 9 (Medium)
+- **Mitigation**:
+  - Capacity planning with phased hiring
+  - Self-service documentation and tools
+  - Automated operational tasks
+  - Tiered support model with SLAs
+  - Knowledge management system
+- **Owner**: AI Team Lead + HR
+- **Status**: Support model design underway
+
+**R-O04: Human Review Capacity Bottleneck** (from Pack A assumption validation)
+- **Description**: Human review demand exceeds capacity, breaching SLAs and degrading experience
+- **Likelihood**: Medium (3/5) - Escalation volumes uncertain
+- **Impact**: High (4/5) - SLA breaches, compliance risk, poor CX
+- **Risk Score**: 12 (Medium-High)
+- **Mitigation**:
+  - Conservative Phase 1 automation rates (10% → 50% progressive)
+  - Reviewer capacity planning based on pilot data
+  - Decision support tools for reviewers
+  - Confidence threshold tuning to optimize escalations
+  - Queue depth monitoring with alerting
+- **Owner**: Operations + AI Team
+- **Status**: Reviewer hiring plan Q1; monitoring tools Q2
+
+#### Strategic Risks
+
+**R-ST01: Evolving Regulatory Landscape**
+- **Description**: New AI regulations require architectural changes or additional controls
+- **Likelihood**: Medium-High (4/5) - AI regulation intensifying globally
+- **Impact**: Medium-High (4/5) - Delays, costs, potential redesign
+- **Risk Score**: 16 (High)
+- **Mitigation**:
+  - Continuous regulatory monitoring
+  - Flexible architecture accommodating evolving requirements
+  - Proactive regulator engagement
+  - Modular, configuration-driven controls
+  - Industry forum participation
+- **Owner**: Chief Compliance Officer + AI Team Lead
+- **Status**: Regulatory monitoring process established
+
+**R-ST02: LLM Provider Dependency** (from Pack A)
+- **Description**: Core capabilities depend on external LLM API uptime and pricing
+- **Likelihood**: Low (2/5) - Major providers have strong SLAs
+- **Impact**: High (4/5) - Service disruption, cost volatility
+- **Risk Score**: 8 (Medium)
+- **Mitigation**:
+  - Multi-provider failover (Azure → AWS Bedrock → on-prem Llama)
+  - Local caching of common responses
+  - Contract negotiations with SLA guarantees
+  - Continuous cost monitoring
+- **Owner**: AI Platform + Procurement
+- **Status**: Primary provider contracted; failover architecture Q2
+
+### 5.2 ASSUMPTIONS
+
+| ID | Assumption | Validation Method | Impact if Invalid | Status |
+|----|------------|-------------------|-------------------|--------|
+| **A-001** | BOR provides <100ms p95 query latency for standard lookups | Performance testing pre-prod; SLA monitoring production | AOP timeouts increase, poor CX | Validation Q1 |
+| **A-002** | Business users can write AOPs using provided DSL without deep LLM knowledge | Usability testing; AOP quality metrics (escalation rate, error rate) | Increased AI Team authoring burden, deployment bottlenecks | Validation Q2 (pilot) |
+| **A-003** | Human review capacity scales linearly with decision volume | Capacity planning model; queue depth monitoring | SLA breaches for Article 22 interventions | Validation ongoing |
+| **A-004** | BOR data is authoritative and tamper-evident | BOR audit logging; checksum verification | Hallucination detection false negatives, compliance violations | Validation Q1 |
+| **A-005** | Workflow platform provides exactly-once email delivery semantics | Integration testing; idempotency validation | Duplicate emails, customer trust erosion | Validation Q1 |
+| **A-006** | Cloud infrastructure has sufficient capacity headroom | Cloud provider capacity planning; multi-region deployment | Scaling bottlenecks during rapid adoption | Validation Q2 |
+| **A-007** | Executive sponsorship remains active throughout implementation | Quarterly steering committee engagement | Loss of support could derail initiative | Validation ongoing |
+| **A-008** | Regulatory environment stable during Phase 0-2 (no major AI banking regs) | Legal/compliance monitoring | May require mid-flight design changes | Validation ongoing |
+| **A-009** | Email types are suitable for automation (not highly nuanced/emotional) | Domain assessment workshops | Lower automation rates than targeted | Validation Q1 |
+| **A-010** | Existing human review processes can be adapted for AI oversight | Process review; reviewer training effectiveness | Extended review times, quality issues | Validation Q2 |
+
+### 5.3 ISSUES
+
+| ID | Issue | Status | Severity | Resolution Target | Action Items | Owner |
+|----|-------|--------|----------|-------------------|--------------|-------|
+| **I-001** | **Explainability vs. Performance Trade-off** (from Pack A): High-performing LLMs lack interpretability for Article 22 explanations | Open | High | Q2 2026 | 1. Evaluate hybrid: GPT-4 for generation + smaller interpretable model for explanations<br>2. Implement LIME/SHAP for local explanations<br>3. Legal review of approach | AI Team Lead |
+| **I-002** | **AOP Version Control Gap**: No branching/merging system; business users could edit production directly | In Progress | Critical | Q1 2026 | 1. Deploy GitOps workflow for AOPs<br>2. Require PR reviews for production changes<br>3. Implement blue/green deployment | Platform Engineering |
+| **I-003** | **BOR Schema Documentation**: Incomplete PII classification in legacy tables | Open | Medium | Q3 2026 | 1. Data catalog initiative<br>2. Automated PII scanning tool<br>3. Manual classification backlog for legacy fields | Data Governance |
+| **I-004** | **Human Reviewer Qualifications Undefined**: No competency requirements for staff approving AI outputs | Open | High | Q1 2026 | 1. Define role-based certification (Retail/Wealth/Commercial)<br>2. Develop decision support tools<br>3. Training curriculum development | HR + Compliance |
+| **I-005** | **Delayed BOR API Documentation**: Integration design blocked without complete API specs | Active | High | 2 weeks | 1. Escalate to BOR management<br>2. Working sessions with BOR tech team<br>3. Reverse engineer from existing integrations if needed | Integration Architect |
+| **I-006** | **Unclear GDPR Article 22 Disclosure Requirements**: Ambiguous regulatory guidance on customer notifications | Active | Critical | 4 weeks | 1. Legal team engage primary regulator<br>2. Research peer institution practices<br>3. Implement conservative disclosure approach interim | Legal + Compliance |
+| **I-007** | **Insufficient GPU for Model Training**: Shared corporate GPU resources over-subscribed | Active | Medium | 3 weeks | 1. Submit dedicated GPU resource request<br>2. Explore cloud GPU rental for bursts<br>3. Optimize training procedures | AI Team Lead |
+
+### 5.4 DEPENDENCIES
+
+| ID | Dependency | Type | Provider | Required By | Risk Level | Contingency | Status |
+|----|------------|------|----------|-------------|------------|-------------|--------|
+| **D-001** | **Workflow Platform API Enhancements**: Async processing, callbacks, bulk ops required for production scale | Internal | Workflow Platform Engineering | Phase 1 (Q2) | High | Use existing APIs with workarounds for pilot; delays push production to Q3 | Committed in roadmap, dev in progress |
+| **D-002** | **BOR Real-Time Sync**: Replication lag <5s for transaction data accuracy | Internal | BOR Team | Phase 1 (Q2) | Medium | Staleness detection; fallback to "pending update" messaging | SLA under negotiation |
+| **D-003** | **Security Architecture Approval**: Enterprise security review required before production | Internal | CISO / Security Architecture | Phase 0 exit (Q1) | High | Early engagement; comprehensive documentation; escalate via CISO if delays | Review submission next month |
+| **D-004** | **Database Access Provisioning**: Agent framework needs BOR query permissions | Internal | Data Governance + DBA | Phase 0 (Q1) | Medium | Use anonymized dev databases initially; request read-only first to expedite | Access request submitted, pending security review |
+| **D-005** | **Compliance Policy Publication**: AI communication policies prerequisite for AOP requirements | Internal | Compliance Department | Phase 0 exit (Q1) | Medium | Begin with conservative assumptions; adapt when finalized | Draft policy expected next month |
+| **D-006** | **Training Infrastructure**: LMS, lab environments, content for business user enablement | Internal | Training Dept + L&D | Phase 2 (Q2) | Medium | AI Team delivers train-the-trainer; self-paced resources; early adopter pilot training | Needs assessment complete |
+| **D-007** | **LLM Provider SLA**: Azure OpenAI/Anthropic API availability and performance | External | LLM Vendor | Phase 1 (Q2) | High | Multi-provider failover; local response caching; contract SLA guarantees | Primary contract signed; failover Q2 |
+| **D-008** | **Identity Provider Integration**: Customer auth status for PII unmasking | External | Enterprise IdP | Phase 1 (Q2) | Medium | Default to masked mode; async unmasking post-verification | Integration design Q1 |
+
+---
+
+## SECTION 6: DELIVERY STRUCTURE
+
+### 6.1 Epic Structure (Jira Hierarchy)
+
+#### Epic 1: Foundation - Agent Framework Core
+**Objective**: Build microservices architecture for agent orchestration  
+**Timeline**: Months 1-3  
+**Stories**:
+- Email ingestion service with workflow platform integration
+- Model serving service with LLM API abstraction
+- Response generation orchestrator with RAG implementation (ADR-002)
+- Context management and conversation threading
+- Monitoring and observability infrastructure
+
+#### Epic 2: Foundation - AOP-BOR Interface Layer
+**Objective**: Implement data contracts and grounding API  
+**Timeline**: Months 1-3  
+**Stories**:
+- Data contract registry and versioning system (FR-INT-001)
+- Contextual grounding API with citation linking (FR-INT-002)
+- Asynchronous query handling with circuit breakers (FR-INT-003)
+- Transactional integrity for BOR writes (FR-INT-004)
+- Multi-domain isolation and access control (FR-INT-005)
+
+#### Epic 3: Foundation - Guardrails & Safety
+**Objective**: Implement multi-layer safety controls  
+**Timeline**: Months 2-3  
+**Stories**:
+- Dynamic PII masking engine (GR-PII-001)
+- Article 22 explanation framework (GR-PII-002)
+- Multi-layer hallucination detection (GR-HAL-001, GR-HAL-002)
+- Human-in-the-loop routing and triggers (GR-HIT-001)
+- Prompt injection defenses (GR-SEC-001)
+
+#### Epic 4: Foundation - AOP Development Tools
+**Objective**: Enable business user (or AI Team) AOP authoring  
+**Timeline**: Months 2-3  
+**Stories**:
+- AOP SDK with local testing sandbox
+- AOP manifest schema and validation
+- Compliance linter and bias checker
+- Version control integration (GitOps workflow)
+- Automated regression test generation
+
+#### Epic 5: Foundation - Security & Compliance
+**Objective**: Complete security reviews and audit infrastructure  
+**Timeline**: Months 2-3  
+**Stories**:
+- Security architecture documentation
+- Penetration testing execution
+- Audit logging and tamper-evident storage
+- Compliance dashboard for governance
+- Data flow mapping and privacy impact assessment
+
+#### Epic 6: Pilot - First Domain Deployment
+**Objective**: Deploy and validate first production AOP  
+**Timeline**: Months 4-6  
+**Stories**:
+- Domain selection and stakeholder alignment
+- Use case definition and AOP development
+- Shadow mode deployment and human evaluation
+- Progressive automation (10% → 50% → 100%)
+- Performance monitoring and optimization
+
+#### Epic 7: Expansion - Multi-Domain Scaling
+**Objective**: Validate operational model at scale  
+**Timeline**: Months 7-9  
+**Stories**:
+- 3 additional domain onboarding
+- Cross-domain performance comparison
+- Operational support model validation
+- Infrastructure auto-scaling verification
+- Community of practice establishment
+
+#### Epic 8: Enterprise - Systematic Rollout
+**Objective**: Scale to all suitable domains  
+**Timeline**: Months 10-18  
+**Stories**:
+- Demand management process
+- Standardized onboarding playbook
+- Continuous improvement program
+- Advanced AOP capabilities (based on learnings)
+- Regulatory adaptation and compliance updates
+
+### 6.2 Key Milestones
+
+| Milestone | Target Date | Success Criteria |
+|-----------|-------------|------------------|
+| **M1: Technical Foundation Complete** | End Month 3 | All core services deployed; security approved; integration tests passing |
+| **M2: Pilot Go-Live** | End Month 4 | First AOP in shadow mode with monitoring active |
+| **M3: Pilot Full Automation** | End Month 6 | First domain achieving 60% automation rate with quality metrics sustained 4 weeks |
+| **M4: Multi-Domain Validation** | End Month 9 | 4 domains live; operational model validated; <10% escalation rate |
+| **M5: Enterprise Scale (10 Domains)** | End Month 14 | 10 domains deployed; self-sustaining operations; community of practice active |
+| **M6: Programme Closure** | End Month 18 | All suitable domains onboarded; ROI validated; transition to BAU operations |
+
+---
+
+## SECTION 7: GOVERNANCE NOTES
+
+### 7.1 RACI Matrix (Key Activities)
+
+| Activity | AI Team Lead | AI Engineers | Business Domain Leaders | Business Users (AOP Authors) | Compliance | Security | Legal | CISO | CTO | Governance Committee |
+|----------|--------------|--------------|------------------------|------------------------------|------------|----------|-------|------|-----|---------------------|
+| **Agent Framework Development** | A | R | C | I | I | C | | | I | I |
+| **Model Selection & Deployment** | A | R | C | | C | | | | I | I |
+| **Safety Guardrails Design** | A | R | | | R | R | C | | I | I |
+| **AOP Development & Testing** | C | C | A | R | C | | | | | I |
+| **Protocol Production Deployment** | C | | A | R | C | | | | | I |
+| **Security Reviews** | I | C | | | | R | | A | | I |
+| **Compliance Validation** | I | C | | | R | | R | | | A |
+| **Incident Response** | A | R | | | C | C | | I | I | I |
+| **Performance Monitoring** | A | R | | | | | | | | I |
+| **Human Review Operations** | C | | A | R | I | | | | | I |
+
+**Legend**: R = Responsible, A = Accountable, C = Consulted, I = Informed
+
+### 7.2 Governance Bodies
+
+**Steering Committee** (Monthly):
+- Executive Sponsor (Chair)
+- CTO
+- Chief Compliance Officer
+- Chief Risk Officer
+- AI Team Lead
+- Business Domain Executives
+
+**AI Governance Committee** (Bi-weekly):
+- AI Team Lead (Chair)
+- Compliance Representative
+- Legal Representative
+- Risk Management
+- Security Architecture
+- Business Stakeholder Rotation
+
+**Working Groups** (Weekly):
+- Technical Architecture (AI Team + Platform + BOR)
+- Compliance & Ethics (Compliance + Legal + AI Responsible AI Lead)
+- Operations (AI Ops + Business Ops + Human Review)
+
+### 7.3 Decision Authority
+
+| Decision Type | Authority | Escalation Path |
+|--------------|-----------|----------------|
+| Technical architecture choices | AI Team Lead | CTO |
+| Model selection/updates | AI Team Lead + Governance Committee | Steering Committee if strategic |
+| AOP production approval | Business Domain Leader + Compliance | Governance Committee for high-risk |
+| Security exceptions | CISO | Steering Committee |
+| Compliance interpretations | Chief Compliance Officer | Legal + Regulators |
+| Phase gate progression | Governance Committee | Steering Committee |
+| Budget/resource allocation | Steering Committee | CFO |
+
+### 7.4 Reporting Cadence
+
+**Weekly**: 
+- Delivery progress dashboard (Jira burndown, milestone tracking)
+- Incident summary (if any)
+- RAID updates
+
+**Monthly**:
+- Steering Committee pack (progress, risks, decisions needed)
+- Performance metrics report
+- Compliance scorecard
+
+**Quarterly**:
+- Fairness audit results
+- Security review summary
+- Business value realization report
+- Lessons learned and continuous improvement actions
+
+---
+
+## SECTION 8: AI TEAM STRATEGIC ENABLERS
+
+*(From Pack A - Critical for Business User Empowerment Model)*
+
+To achieve the vision of business users writing AOPs safely without breaking the system, the AI Team must deliver:
+
+### 8.1 AOP SDK & Sandbox
+
+**Objective**: Enable local AOP development and testing without production risk
+
+**Components**:
+- **Mock BOR**: Realistic test data covering common scenarios and edge cases
+- **Hallucination Detection Preview**: Real-time feedback on grounding quality during authoring
+- **Compliance Linter**: Pre-flight checks against guardrails (PII handling, Article 22, bias)
+- **Performance Profiler**: Query count, latency, resource usage estimation
+- **Test Scenario Generator**: Auto-generate test cases from AOP logic
+
+**Delivery**: Phase 0 (Month 3)
+
+### 8.2 Automated Guardrail Injection
+
+**Objective**: Business users write *what* AOP should do; platform injects *how* to do it safely
+
+**Auto-Injected Controls**:
+- PII masking based on declared BOR fields (GR-PII-001)
+- Grounding checks for all financial data references (FR-INT-002, GR-HAL-001)
+- HITL triggers based on domain configuration (GR-HIT-001)
+- Input sanitization and output validation (GR-SEC-001)
+- Article 22 explanation scaffolding if flagged in manifest (GR-PII-002)
+
+**Implementation**: Platform middleware intercepts AOP execution, applies guardrails transparently
+
+**Delivery**: Phase 0-1 (Months 3-4)
+
+### 8.3 Observability by Design
+
+**Objective**: Every AOP execution produces structured logs for compliance, performance, and feedback
+
+**Telemetry Captured**:
+- AOP identifier and version
+- BOR queries executed (with latency and results metadata)
+- Grounding checks performed (pass/fail per claim)
+- Confidence scores and escalation decisions
+- Human review outcomes (approve/modify/reject + feedback)
+- Customer interaction (sentiment, satisfaction)
+
+**Use Cases**:
+- Compliance auditing (regulatory examination support)
+- Model performance tracking (accuracy, drift detection)
+- Business user feedback loops (AOP optimization suggestions)
+- Incident investigation (root cause analysis)
+
+**Delivery**: Phase 0 (Month 3)
+
+### 8.4 Progressive Exposure
+
+**Objective**: New AOPs earn trust through demonstrated performance
+
+**Automation Graduation Path**:
+1. **Phase 1 - Shadow Mode**: 100% human review, AI output visible for comparison
+2. **Phase 2 - Assisted Mode**: 50% human review, AI handles low-risk cases
+3. **Phase 3 - Monitored Automation**: 10% human review sampling, full automation
+4. **Phase 4 - Autonomous**: <1% sampling, exceptional escalations only
+
+**Graduation Criteria** (must sustain 4 weeks):
+- Accuracy >90%
+- Escalation precision <10% false positives
+- Zero compliance violations
+- Customer satisfaction maintained
+
+**Rollback Triggers**:
+- Accuracy drop >5 percentage points
+- Any compliance violation
+- Customer satisfaction decline >10%
+- Security incident
+
+**Delivery**: Policy framework Phase 0; automated enforcement Phase 1
+
+---
+
+# 3️⃣ DECISION LOG
+
+| ID | Decision Required | Options | Impact | Recommendation | Due Date | Owner |
+|----|------------------|---------|--------|----------------|----------|-------|
+| **DEC-001** | **AOP Authorship Model** | **A**: Business users write AOPs with AI Team SDK/sandbox<br>**B**: AI Team writes AOPs with business input | Affects resource planning, training investment, time-to-value, scalability | **Hybrid approach**: AI Team authorship Phases 1-2; transition to business user model Phases 3-4 with proven tools and training | Phase 0 exit | AI Team Lead + Steering Committee |
+| **DEC-002** | **BOR Query SLA Target** | **A**: <100ms p95 (Pack A specific target)<br>**B**: "Performant" without specific SLA | Affects infrastructure investment, BOR team commitments, AOP timeout configuration | **Adopt 100ms target** with graduated enforcement: aspirational Phase 1, SLA-enforced Phase 2+ | Phase 0 | AI Team Lead + BOR Team Lead |
+| **DEC-003** | **Human Review Financial Threshold** | **A**: €10,000 (Pack A)<br>**B**: Domain-specific risk-based (Pack B)<br>**C**: €5,000 initial, increase based on data | Affects operational load, risk exposure, customer experience | **€10,000 for Phases 1-2**; review for adjustment Phase 3 based on incident data and regulator feedback | Phase 1 | Compliance + Business Leaders |
+| **DEC-004** | **GDPR Article 22 Applicability Scope** | **A**: All automated email decisions (strict interpretation)<br>**B**: Subset with "legal/significant effect" (pragmatic) | Affects development complexity, legal risk, operational overhead | **Legal team to define precise criteria** for banking context; implement Pack A explanation framework for that subset only; document rationale | Phase 0 exit | Legal + Compliance |
+| **DEC-005** | **Model Provider Strategy** | **A**: Single provider with SLA guarantees<br>**B**: Multi-provider with automated failover | Affects cost, complexity, resilience, vendor dependency | **Primary provider (Azure) with failover architecture** (AWS Bedrock backup); implement Phase 2 after pilot validates demand | Phase 1 | AI Team Lead + Procurement |
+| **DEC-006** | **Human Reviewer Certification** | **A**: Formal certification program with exam<br>**B**: Training completion with competency assessment | Affects time-to-deployment, quality, compliance confidence | **Training + competency assessment** (not formal exam); role-based (Retail/Wealth/Commercial); decision support tools to standardize judgment | Phase 0 | HR + Compliance |
+
+---
+
+# 🔹 RECOMMENDED NEXT STEPS
+
+### Immediate Actions (Next 2 Weeks)
+
+1. **Steering Committee Review**: Present merged artefact pack for approval of governance structure, phase gates, and decision framework
+2. **Resolve Critical Decisions**: DEC-001 (authorship model), DEC-004 (Article 22 scope) block detailed planning
+3. **BOR API Documentation**: Escalate I-005 to unblock integration design
+4. **Legal Engagement**: Initiate DEC-004 (GDPR scope) and I-006 (disclosure requirements) resolution
+5. **Resource Planning**: Finalize AI Team hiring plan based on selected authorship model (DEC-001)
+
+### Phase 0 Preparations (Months 1-3)
+
+1. **Kick-off Workshop**: Align extended team on merged requirements, RACI, and delivery approach
+2. **Architecture Detailed Design**: Elaborate ADRs for microservices, BOR interface, security
+3. **Vendor Contracts**: Finalize LLM provider SLA, cloud infrastructure commitments
+4. **Compliance Framework**: Complete policies (D-005), PII classification (I-003), reviewer qualifications (I-004)
+5. **Pilot Domain Selection**: Identify candidate with suitable use cases, stakeholder engagement, manageable risk
+
+### Governance Hygiene
+
+1. **RAID Review Cadence**: Establish weekly AI Team review, monthly Governance Committee review
+2. **Metrics Dashboard**: Build real-time visibility into delivery progress, system performance, compliance
+3. **Decision Log Maintenance**: Track resolution of DEC-001 through DEC-006 with rationale documentation
+4. **Regulatory Monitoring**: Assign owner for continuous tracking of AI banking regulations (R-ST01)
+
+---
+
+# 🔹 MISSING ARTEFACTS
+
+The merged pack is comprehensive, but the following would strengthen governance:
+
+1. **Detailed Cost Model**: Neither pack includes TCO analysis or budget breakdown (infrastructure, labor, licensing, operations)
+2. **Data Retention Policy**: Compliance requirements for email/logs are mentioned but not detailed (7 years stated, but retention strategy for different data types needed)
+3. **Disaster Recovery Plan**: RTO/RPO stated but full DR procedures and testing cadence not documented
+4. **Third-Party Risk Assessment**: LLM provider, cloud infrastructure, IdP dependencies mentioned but formal TPRM assessment not included
+5. **Customer Communication Plan**: How will customers be informed about AI automation? What messaging for opt-out or escalation requests?
+6. **Regulatory Engagement Strategy**: Proactive regulator communication mentioned but no formal plan
+7. **Model Card Template**: For each deployed LLM, standardized documentation of capabilities, limitations, biases, intended use
+8. **Exit Criteria Detail**: Phase gates have success criteria but not detailed exit checklists (e.g., "security approval obtained" needs sub-criteria)
+
+**Recommendation**: Develop these artefacts during Phase 0 detailed planning.
+
+---
+
+**Document Control**
+- Version: 1.0 (Merged from Pack A technical spec + Pack B governance framework)
+- Date: February 8, 2026
+- Status: Draft for Steering Committee Review
+- Next Review: Phase 0 Kick-off (Month 1)
+- Owner: AI Team Lead + Programme Manager
+
+This merged pack is now suitable for steering committee approval, delivery team execution, and risk/audit review. All Pack A technical specificity is preserved within Pack B's governance structure, creating a comprehensive, traceable, and actionable programme foundation.

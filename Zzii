@@ -1,0 +1,441 @@
+from pathlib import Path
+from zipfile import ZipFile
+
+base = Path("/mnt/data/confluence_import_pack_agentic_email_ops")
+base.mkdir(parents=True, exist_ok=True)
+
+files = {}
+
+files["00_README.md"] = """# Confluence Import Pack — Agentic Email Operations Platform
+
+This ZIP contains a set of Markdown pages intended to be imported into Confluence (one page per file).
+
+## Recommended import approach (fastest)
+1. Create a new Confluence space: **Agentic Email Ops**
+2. Create top-level pages using the file names below (copy/paste the Markdown content into each page)
+3. Where you see **[CONFLUENCE MACRO]**, insert the named macro manually (Page Properties / Page Properties Report / Jira Issues).
+
+## If your Confluence supports Markdown import
+1. Create a page
+2. Use **Import → Markdown**
+3. Upload the corresponding `.md` file
+
+## Suggested page tree
+1. 01_Overview_Objectives.md
+2. 02_Roadmap_Phases.md
+3. 03_Governance_RACI_Decisions.md
+4. 04_FRD_Functional_Requirements.md
+5. 05_NFR_NonFunctional_Requirements.md
+6. 06_ADR_Architecture_Decisions.md
+7. 07_RAID_HowTo_PageProperties.md
+8. 08_Audit_Walkthrough_Scenarios.md
+9. 09_Regulator_Facing_Summary.md
+"""
+
+files["01_Overview_Objectives.md"] = """# Overview & Objectives — Agentic Email Automation Initiative
+
+## Vision
+Deploy an enterprise-grade AI-powered email automation capability that can produce compliant, auditable responses (or drafts) to customer and internal emails in a regulated banking environment.
+
+## Core principle
+**Safety and auditability take priority over time-to-market.**
+
+## Separation of concerns
+| Layer | What it is | Owned by | Mutable by business users? | Why |
+|---|---|---|---|---|
+| **Platform (“Skeleton”)** | Ingestion, identity propagation, data access mediation, audit logging, guardrail enforcement | IT / AI Platform | No | Prevents overreach; ensures stable controls |
+| **Authoring Experience (“UI”)** | Visual/low-code protocol builder, simulator, compiler checks | Platform | Limited | Allows business configuration without code |
+| **Execution Engine (“Brain”)** | Agent runtime, deterministic fact injection, verification, HITL routing | Platform | No | Ensures correct, controlled runtime behaviour |
+
+## Strategic objectives
+1. **Operational efficiency**: reduce response time while keeping quality at/above baseline.
+2. **Risk containment**: prevent business-authored protocols from exceeding approved scope.
+3. **Audit & explainability**: reconstruct any decision end-to-end.
+4. **Scalable governance**: make safe change cheap and unsafe change difficult.
+5. **Trust & accuracy**: prevent hallucinated financial facts via deterministic verification.
+
+## Success criteria (initial)
+| Category | Target | Measurement |
+|---|---:|---|
+| Availability | 99.9% (business hours) | Monitoring |
+| End-to-end latency | <5s p95 | Tracing |
+| Accuracy (pilot domain) | >90% | Human eval rubric |
+| Compliance violations | 0 critical | Audit/controls |
+| Escalation quality | <10% false escalations | Ops review |
+| Automation rate | target 60% post-scale (not pilot) | Business review |
+"""
+
+files["02_Roadmap_Phases.md"] = """# Roadmap & Phases
+
+> Milestones close only when **operational trust increases**, not when tickets are “done”.
+
+## Phase 0 — Foundation & Governance Readiness (Months 1–3)
+**Objective:** establish technical controls and governance approvals.
+
+**Key deliverables**
+- Standard workflow → agent handshake payload and correlation IDs
+- BOR interface with versioned data contracts and drift handling
+- Immutable audit logging (WORM-aligned)
+- Authoring tool MVP (visual builder + simulator + compiler checks)
+- Guardrail enforcement middleware (input/protocol/output)
+- Monitoring/telemetry and compliance dashboards
+- Security & compliance approvals; DPIA/PIA as required
+
+**Exit gates**
+- Security architecture approval
+- Data contracts registered + tested
+- Golden test dataset available for pilot domain
+- Human review workflow operational
+- BOR performance/load test executed; SLA negotiation started
+
+## Phase 1 — Controlled Pilot (Months 4–6)
+**Objective:** validate end-to-end safety/performance for a single domain and AOP.
+
+**Deployment ladder**
+- Shadow mode → 10% → 25% → 50% → (conditional) full automation
+- Mandatory HITL for high-risk triggers and low-confidence cases throughout
+
+**Exit gates (sustained 4 weeks)**
+- Accuracy >90% (domain rubric)
+- Customer satisfaction ≥ baseline
+- Zero compliance violations
+- Stable abstain/escalation within thresholds
+
+## Phase 2 — Pilot Expansion (Months 7–9)
+**Objective:** validate multi-domain scalability + authoring model.
+
+- Onboard 3 additional domains
+- Validate training/tooling for business authoring readiness
+- Confirm cross-domain data isolation
+
+## Phase 3 — Enterprise Scale (Months 10–18)
+**Objective:** standardised rollout with playbooks (~2 domains/month).
+
+- Domain onboarding playbook + governance gates
+- Community of practice for AOP authors
+- Quarterly fairness and security reviews
+
+## Phase 4 — Continuous Optimisation (Month 18+)
+**Objective:** continuous improvements to quality, cost, coverage.
+
+- Expanded use cases
+- Model/provider strategy evolution
+- Regulatory adaptation as guidance evolves
+"""
+
+files["03_Governance_RACI_Decisions.md"] = """# Governance, RACI & Decision Authority
+
+## Governance intent
+Governance exists to:
+- **slow unsafe change**
+- **accelerate safe change**
+- make accountability explicit
+
+## Committees
+### Steering Committee (monthly)
+- Executive Sponsor (Chair), CTO, CCO, CRO, AI Team Lead, Domain Execs
+
+### AI Governance Committee (bi-weekly)
+- AI Team Lead (Chair), Compliance, Legal, Risk, Security, rotating Business reps
+
+### Working groups (weekly)
+- Technical Architecture (AI + Platform + BOR)
+- Compliance & Ethics (Compliance + Legal + Responsible AI)
+- Operations (AI Ops + Business Ops + Reviewers)
+
+## RACI (high-level)
+| Activity | AI Team Lead | Platform Eng | Domain Lead | Business Authors | Compliance | Security | Legal | Governance Committee |
+|---|---|---|---|---|---|---|---|---|
+| Platform build | A | R | I | I | I | C | I | I |
+| AOP build (pilot) | A | C | A | R/C | C | I | I | I |
+| Production approval | C | I | A | R | R | C | R | A (high-risk) |
+| Incident response | A | R | C | I | C | C | I | I |
+| Model updates | A | R | C | I | C | I | I | A (material) |
+
+Legend: R=Responsible, A=Accountable, C=Consulted, I=Informed
+
+## Decision log (starter)
+| ID | Decision | Owner | Due | Notes |
+|---|---|---|---|---|
+| DEC-001 | Authorship model (AI-led vs business-led vs hybrid) | Steering | Phase 0 exit | Recommend hybrid |
+| DEC-002 | BOR SLA target (tiered) | AI + BOR | Phase 0 | Validate with load test |
+| DEC-003 | HITL threshold for high-value cases | Compliance + Ops | Phase 1 | Start €10k; review post-pilot |
+| DEC-004 | GDPR Art. 22 applicability criteria | Legal + Compliance | Phase 0 exit | Define “legal/significant effect” |
+"""
+
+files["04_FRD_Functional_Requirements.md"] = """# FRD — Functional Requirements (FRD-AOP-PILOT-v1.0)
+
+## Purpose
+Define mandatory functional behaviour for the Agentic Email Automation platform with explicit separation of concerns between Platform, Authoring, and Execution.
+
+## Scope
+Applies to all domains onboarding to the platform.
+
+---
+
+## 1) Platform Requirements (“Skeleton”)
+
+### FR-PLAT-001 — Orchestration Handshake
+Workflow platform transmits a standardized JSON payload including:
+- `CaseID`
+- `Encrypted_Session_Token`
+- `User_Intent_Classification`
+- `Raw_Email_Body`
+- (optional) thread metadata, attachments metadata
+
+### FR-PLAT-002 — Identity Propagation & Least Privilege
+BOR access uses:
+- On-Behalf-Of (OBO) where available, or
+- strict Row-Level Security / domain-scoped tokens
+to ensure no unauthorized access to VIP/employee data.
+
+### FR-PLAT-003 — Immutable Audit Logging (WORM-aligned)
+Log, with correlation ID:
+- input email + derived context
+- BOR queries (intent + parameters)
+- raw results (protected)
+- assembled prompt context (protected)
+- model output
+- verification outcomes
+- escalation decisions + reviewer outcomes
+- final message sent
+
+### FR-PLAT-004 — Tool / Data Gateway
+All tool and data access is mediated through an allowlisted gateway enforcing:
+- schema contracts
+- field sensitivity controls
+- rate limits / backpressure
+- egress restrictions (public APIs via proxy only)
+
+---
+
+## 2) AOP Authoring (“UI”)
+
+### FR-AUTH-001 — Visual Flow Builder
+Business authoring uses a drag-and-drop interface. Free-text coding is prohibited for business authors.
+
+### FR-AUTH-002 — Pre-Flight Simulator
+Users run AOPs against a synthetic “golden set” to validate:
+- routing logic
+- required data access
+- output constraints
+- expected escalations
+
+### FR-AUTH-003 — Compiler Enforced Hard Limits
+- Max BOR lookups per email: 3
+- Max response length: 200 words
+- Forbidden phrases (central list)
+- Complexity cap: max 10 decision nodes
+Violations block publish.
+
+### FR-AUTH-004 — Approval Workflow
+AOP promotion requires:
+- automated checks pass
+- reviewer approvals (role-based)
+- audit evidence bundle generated
+
+---
+
+## 3) Execution Engine (“Brain”)
+
+### FR-EXEC-001 — Deterministic Fact Injection
+Financial facts retrieved from BOR are injected as protected immutable context. The model is instructed that these values cannot be altered.
+
+### FR-EXEC-002 — Fail-Safe Handover
+On timeout, logic error, or confidence < 0.85:
+- return standard `Handoff_Code`
+- route to human agent
+- record cause in audit log
+
+### FR-EXEC-003 — Deterministic Verifier (Financial Claims)
+A deterministic (non-AI) verifier compares numeric claims to BOR data.
+Mismatch → block send + require review.
+
+### FR-EXEC-004 — Regulatory Footer Injection
+Legal disclaimers are injected after generation so they cannot be omitted or altered by the model.
+"""
+
+files["05_NFR_NonFunctional_Requirements.md"] = """# NFR — Non-Functional Requirements
+
+## Performance
+- End-to-end latency: <5s p95 for automated responses
+- BOR read latency: target <100ms p95 (validate); initial assumption <200ms p95 for pilot
+- Error rate: <1%
+
+## Security
+- Zero-trust posture
+- Least privilege, domain-scoped access
+- Mutual TLS for service-to-service
+- Encryption at rest and in transit
+- Prompt injection defenses and red-team testing cadence
+
+## Reliability
+- Circuit breakers and safe mode behaviours
+- Graceful degradation to templates / handoff
+- RTO <15 min, RPO <15 min (validate DR approach)
+
+## Auditability & Compliance
+- Full decision replay for every case (correlation IDs)
+- WORM-aligned immutable logs
+- Retention: 7 years (confirm with records management)
+- Regular fairness/bias reviews where applicable
+"""
+
+files["06_ADR_Architecture_Decisions.md"] = """# ADR Pack — Architecture Decision Records
+
+## ADR-001 — Separation of Concerns
+**Decision:** Enforce strict Platform (“Skeleton”) / Authoring (“UI”) / Execution (“Brain”) separation.  
+**Rationale:** Contain variability and prevent business-authored logic from changing security or data access boundaries.  
+**Consequences:** Requires strong compiler/runtime enforcement and clear ownership boundaries.
+
+## ADR-002 — Grounded Generation + Deterministic Verification
+**Decision:** Use grounded generation for factual claims and deterministic verification for financial outputs.  
+**Rationale:** LLMs are not trusted sources of truth; correctness must be provable.  
+**Consequences:** Additional engineering for citations, metadata, and verifier; reduced risk of hallucinated facts.
+
+## ADR-003 — Human-in-the-Loop by Default for High-Risk/Low-Confidence
+**Decision:** Default to HITL for low-confidence outputs and high-risk triggers.  
+**Rationale:** Align with governance expectations and GDPR Article 22 where applicable.  
+**Consequences:** Operational capacity planning for review queues; requires reviewer tooling.
+
+## ADR-004 — Public Data Proxy for Any Internet Egress
+**Decision:** Any public API (e.g., FX rates) accessed via internal proxy with allowlists and caching.  
+**Rationale:** Prevent uncontrolled egress and prompt injection via external payloads.  
+**Consequences:** Additional service; clearer provenance and resilience.
+"""
+
+files["07_RAID_HowTo_PageProperties.md"] = """# RAID in Confluence Without Editing the Dashboard (Page Properties Pattern)
+
+## Goal
+Capture RAID as structured records and render dashboards automatically, avoiding manual page edits.
+
+## Pattern
+- Each RAID item is its **own page** (child pages under “RAID Register”)
+- Each RAID item page contains a **Page Properties** macro wrapping a **2-column table**
+- A “RAID Dashboard” page uses **Page Properties Report** to aggregate items
+
+---
+
+## 1) RAID Item Page Template (copy/paste)
+
+> Create a page titled: `R-### <short title>` and add the label: `raid`
+
+[CONFLUENCE MACRO: Page Properties]
+
+| Field | Value |
+|---|---|
+| Type | Risk / Assumption / Issue / Dependency |
+| ID | R-### |
+| Title | <short title> |
+| Description | <what can go wrong / what is blocked> |
+| Likelihood | Low / Med / High |
+| Impact | Low / Med / High / Critical |
+| Owner | <name/team> |
+| Mitigation | <controls/actions> |
+| Status | Open / Mitigating / Closed |
+| Review date | YYYY-MM-DD |
+| Related Epic | <Jira link or key> |
+| Evidence link | <logs/tests/ADR/etc> |
+
+[END MACRO]
+
+---
+
+## 2) RAID Dashboard Page Setup
+
+Create a page titled: **RAID Dashboard**
+
+Insert:
+[CONFLUENCE MACRO: Page Properties Report]
+- Label filter: `raid`
+- Columns: Type, ID, Title, Impact, Likelihood, Status, Owner, Review date
+- Sort: Impact desc, Status, Review date
+
+Result: a live table that updates automatically.
+
+---
+
+## 3) Optional: Split dashboards
+Create separate dashboards using label variants:
+- `raid-risk`
+- `raid-issue`
+- `raid-dep`
+and filter each report accordingly.
+"""
+
+files["08_Audit_Walkthrough_Scenarios.md"] = """# Audit Walkthrough Scenarios (Evidence-led)
+
+## Scenario 1 — Prompt Injection Attempt
+**Input:** Customer email contains instruction-like text attempting to override policy.
+
+**Expected behaviour**
+- Input sanitization triggers
+- Output scanning checks for leakage
+- Least-privilege prevents data exfiltration
+- Case escalates to human if risk threshold met
+
+**Evidence to show**
+- Audit log entry (correlation ID)
+- Sanitization flag
+- Escalation decision + reason code
+- No sensitive fields accessed
+
+## Scenario 2 — Hallucinated Balance
+**Input:** Model drafts a numeric claim inconsistent with BOR.
+
+**Expected behaviour**
+- Deterministic verifier compares output vs BOR JSON
+- Mismatch blocks send
+- HITL queue receives flagged draft
+
+**Evidence to show**
+- BOR data payload hash/metadata
+- Verifier failure log
+- Reviewer action record
+
+## Scenario 3 — GDPR Article 22 Review Request
+**Input:** Customer requests human review/explanation.
+
+**Expected behaviour**
+- Article 22 flag determines applicability
+- Explanation payload stored
+- Ticket routed to human reviewer within SLA
+
+**Evidence to show**
+- Explanation bundle
+- SLA compliance metrics
+- Reviewer final decision record
+"""
+
+files["09_Regulator_Facing_Summary.md"] = """# Regulator-Facing Summary — AI Email Automation
+
+## What the system does
+Assists or automates responses to inbound emails using AI **within strict safeguards**. The system is designed to be auditable and to escalate to human decision-makers when risk is elevated.
+
+## What the system does NOT do
+- It does not autonomously make high-impact decisions without human oversight.
+- It does not treat AI output as a source of truth for financial facts.
+- It does not allow business users to bypass data access controls.
+
+## Key safeguards
+- **Least privilege data access** (domain scoping, RLS/OBO)
+- **Immutable audit logging** (replayable decision traces)
+- **Grounding + deterministic verification** for financial claims
+- **Human-in-the-loop** for low confidence and high-risk triggers
+- **Prompt injection defenses** and regular adversarial testing
+- **Regulatory disclosures** injected post-generation
+
+## Auditability
+Every case can be reconstructed end-to-end using correlation IDs, including inputs, data retrieval, model output, verification results, and final disposition.
+"""
+
+# write files
+for name, content in files.items():
+    (base / name).write_text(content, encoding="utf-8")
+
+zip_path = Path("/mnt/data/Confluence_Import_Pack_Agentic_Email_Ops.zip")
+with ZipFile(zip_path, "w") as z:
+    for p in sorted(base.iterdir()):
+        z.write(p, arcname=p.name)
+
+zip_path.as_posix()

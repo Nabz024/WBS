@@ -1,0 +1,171 @@
+Nice — with that flow, the trick is to separate “plumbing E2E” from “real intelligence” and to treat each boundary as a contract you can stub.
+
+Here’s a clean story set that matches your pipeline: email in → extract → match AOP → run AOP → draft → send to workflow.
+
+Epic framing (capability)
+
+Inbound Email → AOP Execution → Draft Response → Workflow Handoff
+
+Vertical-slice user stories (sequenced)
+
+Story 1 — Ingest + trace + handoff contract (no intelligence)
+
+Goal: prove the skeleton works end-to-end.
+
+AC
+
+System receives an email payload (with attachments/metadata if applicable)
+
+Generates correlation ID and logs raw input + normalized fields
+
+Writes a “processing record” (status = received)
+
+Sends a placeholder draft + minimal fields to workflow platform (test endpoint OK)
+
+Observability shows: received → handed off
+
+
+
+> Everything else can be stubbed. This is your “pipe is connected” milestone.
+
+
+
+
+---
+
+Story 2 — Data extraction contract (stub extraction OK)
+
+Goal: define what “extract data” means and make it consistent.
+
+AC
+
+Normalized extraction schema exists (e.g., subject, sender, body_text, key fields)
+
+Extraction produces a structured object (can be rules-based or placeholder mapping)
+
+Extraction failures produce a deterministic error + reason code
+
+Downstream steps read only from the extraction object (not raw email)
+
+
+
+> This is where you avoid later chaos: extraction becomes a system boundary.
+
+
+
+
+---
+
+Story 3 — AOP matching (forced routing first)
+
+Goal: prove the routing + audit trail.
+
+AC
+
+Matching module selects an AOP ID based on extracted fields
+
+For v0: allow forced AOP selection (config / test harness)
+
+Logs the match decision and why (even if “forced”)
+
+If no match: routes to workflow with “needs human triage” + reason
+
+
+
+> This story makes “match AOP” concrete and debuggable early.
+
+
+
+
+---
+
+Story 4 — Execute AOP (skeleton steps, stub dependencies)
+
+Goal: prove orchestration works.
+
+AC
+
+AOP runner loads AOP definition and executes steps in order
+
+Steps can be “no-op” / stubbed but must emit step-level logs + outputs
+
+Errors handled with retry/abort policy per step
+
+Produces an “AOP result object” for drafting
+
+
+
+> This is the heart of agentic delivery: step traceability.
+
+
+
+
+---
+
+Story 5 — Draft email (template first, model later)
+
+Goal: drafting is deterministic at first.
+
+AC
+
+Draft composed from extraction + AOP result using a template
+
+Draft includes placeholders for missing info + questions to ask
+
+Draft quality checks: tone, required fields, disallowed content guardrails
+
+Draft stored + linked to correlation ID
+
+
+
+> You can later swap template drafting for LLM drafting as a change, not a rewrite.
+
+
+
+
+---
+
+Story 6 — Send draft + context to workflow (final schema + status)
+
+Goal: complete the “send to workflow” contract.
+
+AC
+
+Workflow payload includes: correlation ID, AOP ID, extracted fields summary, draft text, confidence/flags, trace link
+
+Status transitions updated (received → processed → sent_to_workflow)
+
+Idempotency: duplicate email ID doesn’t create duplicate downstream actions
+
+
+
+
+---
+
+One important adjustment to your flow
+
+You said: email in → extract data → match AOP → run AOP → draft → send to workflow
+
+In practice, you’ll want send-to-workflow twice as a pattern:
+
+1. Early: “received / in progress / needs info” (optional but powerful)
+
+
+2. Final: “draft ready” + full context
+
+
+
+Even if you don’t implement the early one now, writing it as a capability keeps you safe later.
+
+What this resolves (your concern)
+
+You’re not claiming you can do a full real E2E test on day 1. You’re delivering:
+
+E2E contract first (with stubs)
+
+then swap stubs for real components one by one
+
+while keeping demos and acceptance criteria meaningful
+
+
+If you want, I can also convert the above into a Jira-ready format (Story title, description, AC, dependencies, DoD) and include the “no-match” and “extraction-fail” paths as separate stories.

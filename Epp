@@ -1,0 +1,751 @@
+EPIC 7 — Safety, Guardrails & Controls
+
+Epic description
+
+Implement cross-cutting safety controls that constrain agent behaviour, enforce policy, and produce auditable evidence. This epic ensures the system is safe to operate in a regulated environment even as AOPs and prompts evolve.
+
+System boundary statement
+
+Guardrails apply within the agentic system (ingestion → extraction → matching → execution → drafting → handoff). This epic does not own downstream workflow/human processes; it ensures the payload leaving the boundary is safe, compliant, and explainable.
+
+Key outputs / contracts
+
+Versioned Guardrail Policy (what’s allowed/blocked, budgets, escalation rules)
+
+Enforcement points across components
+
+Standardised reason codes for guardrail triggers
+
+Kill switch / feature flags (AOP-level and system-level)
+
+Audit evidence requirements (trace completeness)
+
+
+Dependencies
+
+EPIC 1 (Correlation ID / traceability foundation)
+
+Works in parallel with EPIC 2–6, but becomes a release gate for EPIC 4/5/6 to reach UAT/Prod
+
+
+
+---
+
+Stories (Jira-ready)
+
+7.1 Define Guardrail Policy model (versioned)
+
+AC
+
+Guardrail Policy schema defined and versioned
+
+Covers: allowed actions, blocked actions, step/time budgets, logging/redaction rules, escalation conditions
+
+Policy includes reason codes and severity levels
+
+Policy can be evaluated deterministically
+
+
+7.2 Implement execution budgets (steps/time) with reason codes
+
+AC
+
+Max steps and max runtime enforced during AOP execution
+
+On breach: execution stops and status recorded as GUARDRAIL_VIOLATION
+
+Reason code identifies which limit breached (e.g., BUDGET_STEPS_EXCEEDED)
+
+Trace includes budget counters at termination
+
+
+7.3 Implement action allowlist / blocklist for AOP steps
+
+AC
+
+Each AOP step type is classified as allowed/blocked per policy
+
+Blocked actions cannot execute; system returns GUARDRAIL_VIOLATION
+
+Block events include: step name, action type, policy version, reason code
+
+
+7.4 Implement data handling guardrails (redaction & minimisation)
+
+AC
+
+Logging and payload redaction rules defined and enforced
+
+Sensitive fields (e.g., PII) are masked/omitted per policy
+
+Redaction is visible in trace as “redacted” (not silently removed)
+
+Handoff payload complies with minimisation rules
+
+
+7.5 Implement AOP allowlist + per-AOP feature flags (kill switch)
+
+AC
+
+Ability to enable/disable AOPs via configuration
+
+Ability to disable drafting or execution globally (emergency switch)
+
+Disabled AOP results in deterministic outcome (e.g., AOP_DISABLED) and is handed off for triage
+
+All toggles are auditable (who/when/what version)
+
+
+7.6 Define escalation / stop conditions (HITL triggers)
+
+AC
+
+Policy defines conditions that force stop (low confidence, missing required fields, guardrail hits)
+
+System produces a handoff payload with explicit status and required next action
+
+No downstream ownership implied; only produces a clear triage package
+
+
+7.7 Trace completeness requirements (audit evidence)
+
+AC
+
+For every run, trace must include:
+
+correlation ID
+
+extraction version
+
+match decision + rationale
+
+AOP version + step outcomes
+
+draft template/version + validation flags
+
+handoff payload version + delivery status
+
+
+Missing trace elements fail validation with reason code TRACE_INCOMPLETE
+
+
+
+---
+
+EPIC 8 — Quality, E2E Validation & Release Readiness
+
+Epic description
+
+Build the automated validation layer (contract tests, E2E harness, regression suites, observability assertions) that proves the system works end-to-end, detects drift, and gates promotions through environments.
+
+System boundary statement
+
+This epic validates the agentic system up to the handoff boundary (payload acknowledged by workflow endpoint). It does not validate downstream workflow actions or human behaviour.
+
+Key outputs / contracts
+
+Test harness supporting Stub E2E and Fidelity E2E
+
+Contract test suite for all schemas
+
+Golden dataset (emails → expected routing/draft characteristics)
+
+Automated regression suite + drift detection approach
+
+Release gates & promotion checklist (Dev/SIT/UAT/Prod)
+
+
+Dependencies
+
+EPIC 6 (handoff schema + endpoint behaviour for “ack”)
+
+EPIC 2/3/4/5 schemas and outputs as they become defined
+
+EPIC 1 correlation ID required for observability assertions
+
+
+
+---
+
+Stories (Jira-ready)
+
+8.1 Define “E2E” taxonomy and test modes (Stub vs Fidelity)
+
+AC
+
+Documented definitions:
+
+Stub E2E = validates system contract end-to-end with forced routing / stubbed steps
+
+Fidelity E2E = validates system using real decisioning and at least one real dependency
+
+
+Each mode has explicit pass/fail criteria and environment applicability
+
+
+8.2 Build contract test suite for inbound + extraction schemas
+
+AC
+
+Automated tests validate:
+
+inbound email payload schema (EPIC 1)
+
+extraction schema conformance (EPIC 2)
+
+
+Tests run in CI
+
+Failures are actionable (pinpoint field violations)
+
+
+8.3 Build contract test suite for match result + AOP result + handoff payload
+
+AC
+
+Automated tests validate:
+
+match result format + required rationale (EPIC 3)
+
+AOP execution result schema (EPIC 4)
+
+handoff payload schema + version correctness (EPIC 6)
+
+
+Includes negative tests for failure statuses
+
+
+8.4 Implement E2E harness (Stub mode)
+
+AC
+
+Harness can:
+
+inject test emails
+
+force AOP selection
+
+run stubbed steps
+
+generate template drafts
+
+assert handoff payload acknowledged
+
+
+Produces a test run report keyed by correlation ID
+
+
+8.5 Implement E2E harness (Fidelity mode)
+
+AC
+
+Harness supports running with:
+
+real extraction logic
+
+real matching logic
+
+at least one real AOP step (where permitted)
+
+
+Defines allowed test dependencies and safe endpoints
+
+Produces fidelity run report with timings + status distribution
+
+
+8.6 Build golden dataset + expected outcomes
+
+AC
+
+Curated set of representative emails (synthetic or approved anonymised)
+
+For each case: expected AOP/NO_MATCH and expected draft characteristics (not necessarily exact text)
+
+Dataset versioned and used in CI/regression
+
+
+8.7 Define regression criteria (“what counts as regression”)
+
+AC
+
+Regression definition includes:
+
+routing changes beyond threshold
+
+increase in NO_MATCH rate
+
+increase in guardrail violations
+
+trace completeness failures
+
+payload schema violations
+
+
+Thresholds documented and agreed
+
+
+8.8 Observability assertions baked into tests
+
+AC
+
+Automated assertions verify:
+
+correlation ID present throughout
+
+decision trace complete
+
+terminal status correct (SENT_TO_WORKFLOW / failure codes)
+
+
+Failures point to missing trace elements
+
+
+8.9 Release readiness checklist + promotion gates
+
+AC
+
+Checklist created for each environment promotion:
+
+Dev → SIT
+
+SIT → UAT
+
+UAT → Prod
+
+
+Includes mandatory suites: contract tests, stub E2E, fidelity E2E (as appropriate), guardrail compliance checks
+
+Clear go/no-go owners and artefacts
+
+
+
+---
+
+Add to Confluence: Release Gate Matrix (simple + scannable)
+
+Gate	Dev	SIT	UAT	Prod
+
+Contract tests (schemas)	✅	✅	✅	✅
+Stub E2E flow	✅	✅	✅	✅
+Fidelity E2E (real decisioning)	Optional	✅	✅	✅
+Guardrail policy enforced	Optional	✅	✅	✅
+Trace completeness	✅	✅	✅	✅
+Payload acknowledged (handoff)	✅ (test endpoint ok)	✅	✅	✅
+Performance smoke (basic)	Optional	✅	✅	✅
+
+
+Notes
+
+Dev can allow partials; SIT+ is where you enforce readiness.
+
+“Prod” requires guardrails + trace completeness + handoff acknowledgement.
+
+
+
+---
+
+If you want, I can now:
+
+weave EPIC 7 and 8 into the earlier Confluence page structure (so everything is one coherent page), or
+
+generate a second Confluence page titled “Release Readiness & Quality Strategy” that contains EPIC 8 plus the gates/checklists.
+
+
+Tell me which you prefer and I’ll format it exactly.
+
+
+Perfect — I’ll give you both outputs, ready to drop straight into your tooling:
+
+1. A Confluence page (copy-paste ready, with headings, tables, and clear boundary language)
+
+
+2. A single architecture / dependency diagram spec you can hand to an architect or recreate quickly in draw.io / Miro / Lucid
+
+
+
+No new logic, no drift — this is a faithful representation of everything we aligned on.
+
+
+---
+
+1️⃣ Confluence Page (copy-paste ready)
+
+You can paste this into Confluence as-is.
+I’ll use neutral formatting (headings, tables, callouts) so it renders cleanly.
+
+
+---
+
+Agentic Email Processing System
+
+Epics, Stories, Dependencies & System Boundaries
+
+
+---
+
+1. Purpose
+
+This page defines the capability-based epics, delivery stories, dependencies, and explicit system boundaries for the Agentic Email Processing System.
+
+The intent is to:
+
+Enable incremental delivery without pretending full E2E fidelity exists early
+
+Prevent scope bleed into workflow or human orchestration
+
+Make ownership, failure modes, and handoff responsibilities explicit
+
+
+
+---
+
+2. System Boundary (Read This First)
+
+> System Boundary Statement
+The Agentic Email Processing System begins at inbound email ingestion and ends at successful, acknowledged payload delivery to the workflow platform.
+
+Any orchestration, human action, SLA enforcement, or downstream system behaviour after handoff is explicitly out of scope.
+
+
+
+Terminal responsibility states
+
+SENT_TO_WORKFLOW
+
+HANDOFF_FAILED
+
+
+
+---
+
+3. High-Level Capability Flow
+
+Inbound Email
+   ↓
+Ingestion & Traceability
+   ↓
+Data Extraction & Normalisation
+   ↓
+AOP Matching & Routing
+   ↓
+AOP Execution & Orchestration
+   ↓
+Draft Generation
+   ↓
+══════ SYSTEM BOUNDARY ══════
+   ↓
+Workflow Handoff (payload delivery only)
+
+
+---
+
+4. Epic Overview
+
+Epic	Capability	Responsibility Ends
+
+EPIC 1	Email Ingestion & Traceability	Internal processing record created
+EPIC 2	Data Extraction & Normalisation	Structured extraction object produced
+EPIC 3	AOP Matching & Routing	AOP ID or NO_MATCH decided
+EPIC 4	AOP Execution & Orchestration	AOP result object produced
+EPIC 5	Draft Response Generation	Draft artifact generated
+EPIC 6	Workflow Handoff	Payload acknowledged by workflow
+
+
+
+---
+
+5. EPIC 1 — Email Ingestion & Traceability
+
+Purpose
+Provide a reliable, idempotent entry point into the agentic system with full traceability.
+
+System boundary clarification
+This epic does not perform extraction, matching, drafting, or workflow actions.
+
+Stories
+
+ID	Story	Key Acceptance Criteria
+
+1.1	Ingest inbound email	Correlation ID generated, status = RECEIVED, payload logged
+1.2	Idempotent handling	Duplicate events do not re-trigger processing
+1.3	Reject invalid payload	Invalid payload rejected with explicit reason code
+
+
+
+---
+
+6. EPIC 2 — Data Extraction & Normalisation
+
+Purpose
+Transform unstructured email content into a stable, versioned extraction contract.
+
+System boundary clarification
+This epic prepares inputs only. It does not decide outcomes.
+
+Stories
+
+ID	Story	Key Acceptance Criteria
+
+2.1	Define extraction schema	Versioned schema published
+2.2	v0 extraction	Deterministic population of schema
+2.3	Extraction failure path	Status = EXTRACTION_FAILED, no AOP matching
+2.4	Attachment handling	Attachment policy enforced and recorded
+
+
+
+---
+
+7. EPIC 3 — AOP Matching & Routing
+
+Purpose
+Determine which Agentic Operating Procedure applies, or explicitly decide no match.
+
+System boundary clarification
+This epic selects an AOP but does not execute it.
+
+Stories
+
+ID	Story	Key Acceptance Criteria
+
+3.1	Matching interface	Decision trace captured
+3.2	Forced AOP (stub)	Configurable forced routing
+3.3	v0 matching logic	Deterministic rule-based match
+3.4	No-match handling	Status = NO_MATCH, reason codes
+
+
+
+---
+
+8. EPIC 4 — AOP Execution & Orchestration
+
+Purpose
+Safely execute an AOP as a sequence of observable steps.
+
+System boundary clarification
+Execution stops once AOP results are produced.
+
+Stories
+
+ID	Story	Key Acceptance Criteria
+
+4.1	Load AOP definition	Versioned AOP loaded or fails
+4.2	Execute steps	Step-level trace captured
+4.3	Stub steps	Mocked steps supported
+4.4	Error handling	Retry policy + terminal failure
+4.5	Guardrails	Execution limits enforced
+
+
+
+---
+
+9. EPIC 5 — Draft Response Generation
+
+Purpose
+Produce a compliant, explainable draft response.
+
+System boundary clarification
+This epic generates drafts only; it does not send messages externally.
+
+Stories
+
+ID	Story	Key Acceptance Criteria
+
+5.1	Template-based draft	Deterministic draft produced
+5.2	Draft validation	Guardrails + validation flags
+5.3	Failure/no-match drafts	Triage drafts generated
+
+
+
+---
+
+10. EPIC 6 — Workflow Handoff & Boundary Contract
+
+Purpose
+Deliver agent output to workflow and terminate responsibility.
+
+System boundary clarification
+No ownership of workflow execution or outcomes.
+
+Stories
+
+ID	Story	Key Acceptance Criteria
+
+6.1	Define payload schema	Versioned handoff contract
+6.2	Deliver payload	Ack received → SENT_TO_WORKFLOW
+6.3	Retry & idempotency	Duplicate-safe delivery
+6.4	Boundary observability	Trace ends at handoff
+
+
+
+---
+
+11. Dependency Summary
+
+Minimal Contract E2E (early demo)
+
+1.1 → 2.1 → 3.2 → 4.3 → 5.1 → 6.2
+
+
+True E2E Fidelity (later)
+
+Real extraction (2.2)
+
+Real matching (3.3)
+
+Real AOP step (4.2)
+
+Real workflow endpoint (6.2)
+
+
+
+---
+
+2️⃣ Architecture & Dependency Diagram (single diagram spec)
+
+You can give this directly to someone to draw — or recreate it yourself in 10 minutes.
+
+
+---
+
+Diagram Title
+
+Agentic Email Processing — Capability Flow & System Boundary
+
+
+---
+
+Diagram Layout (left → right)
+
+Box 1 — Inbound Email
+
+Email payload
+
+Metadata
+
+Attachments (if any)
+
+
+↓
+
+Box 2 — Ingestion & Traceability
+
+Correlation ID
+
+Processing record
+
+Idempotency
+
+
+↓
+
+Box 3 — Data Extraction & Normalisation
+
+Extraction schema (vX)
+
+Extracted object
+
+Failure path (EXTRACTION_FAILED)
+
+
+↓
+
+Box 4 — AOP Matching & Routing
+
+AOP ID
+
+Confidence
+
+Decision trace
+
+NO_MATCH exit
+
+
+↓
+
+Box 5 — AOP Execution & Orchestration
+
+AOP definition
+
+Step execution
+
+Guardrails
+
+AOP_FAILED exit
+
+
+↓
+
+Box 6 — Draft Response Generation
+
+Draft content
+
+Validation flags
+
+Failure/triage drafts
+
+
+↓
+
+Horizontal Line (Bold, Labelled)
+
+SYSTEM BOUNDARY — Responsibility Ends Here
+
+↓
+
+Box 7 — Workflow Handoff (External)
+
+(Dashed border to indicate external ownership)
+
+Payload delivery
+
+Acknowledgement only
+
+
+
+---
+
+Diagram Annotations (important)
+
+All failure exits still route to handoff
+
+No arrows return from workflow
+
+No SLA or orchestration logic beyond boundary
+
+Correlation ID visible in every box
+
+
+
+---
+
+Optional legend
+
+Solid box = owned capability
+
+Dashed box = external system
+
+Red exit = terminal failure
+
+Green exit = successful handoff
+
+
+
+---
+
+Final anchor sentence (use everywhere)
+
+> “This system makes decisions and drafts responses. It does not resolve cases. Responsibility ends at workflow handoff.”
+
+
+
+
+---
+
+If you want next:
+
+I can convert this Confluence page into Jira epics/stories automatically
+
+Or turn the diagram spec into a draw.io XML you can import directly
+
+
+Just tell me which format you want next.

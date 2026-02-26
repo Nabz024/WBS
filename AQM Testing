@@ -1,0 +1,22 @@
+,
+
+Thanks for sharing the historic dataset — that works for dev testing on our side. We’ll use it mainly to validate the mechanics (ingestion → ID extraction → AOP selection → draft generation flow) and regression-test changes over time.
+
+Just to flag why we can’t rely on the historic labels to test “draft correctness” end-to-end: the historic replies were generated against a point-in-time setup and underlying data we can’t query/recreate today, so we can’t programmatically verify that the same values should appear in the draft (or whether any differences are expected vs legacy).
+
+Related to that, the biggest gap for us is the rejected bucket. With no rejection reasons, it’s hard to tell whether those were rejected because they weren’t trade inquiries, because the email lacked a valid ID, because the wrong ID was extracted, or for some other operational/compliance reason — which makes it risky to treat that corpus as a clean “negative set”.
+
+To make UAT smoother and give us actionable signal, can we add one small thing to the UAT process: for each test case, the tester captures an outcome + a simple reason code?
+
+Something lightweight like:
+
+Outcome: Accept / Partial / Reject
+
+Reason (pick one): Not a trade inquiry / No valid ID / Wrong ID / Multiple IDs / Data not found / Wrong template / Other (with a short note if “Other”)
+
+This doesn’t need to be perfect — even a quick dropdown or short list will give us the clarity we’re missing from the historic data and help us iterate quickly after UAT.
+
+Happy to align on the simplest way to capture it (sheet, ticket field, whatever is easiest for your team).
+
+Thanks,
+Ed
